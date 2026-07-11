@@ -45,7 +45,7 @@ const categoryIconTypes={
 const categorySvgPaths={
   map:'<path d="M9 18 3.5 20.5V6L9 3.5l6 2.5 5.5-2.5V18L15 20.5 9 18Z"/><path d="M9 3.5V18M15 6v14.5"/>',
   clipboard:'<rect x="5" y="4" width="14" height="17" rx="2"/><path d="M9 4V2h6v2M8 10h8M8 14h6"/>',
-  ruler:'<path d="m4 20 16-16 3 3L7 23H4v-3Z"/><path d="m14 6 4 4M11 9l2 2M8 12l2 2"/>',
+  ruler:'<rect x="3" y="7" width="18" height="10" rx="2"/><path d="M7 7v4M10 7v2.5M13 7v4M16 7v2.5M19 7v4"/>',
   flask:'<path d="M9 3h6M10 3v6l-5 9a2 2 0 0 0 2 3h10a2 2 0 0 0 2-3l-5-9V3"/><path d="M8 15h8"/>',
   construction:'<path d="M4 18h16M6 18l2-8h8l2 8M9 10V6h6v4M10 14h4"/>',
   square:'<rect x="4" y="4" width="16" height="16" rx="2"/><path d="M8 8h8v8H8z"/>',
@@ -125,5 +125,6 @@ const categoryColorKeys={
 };
 
 function categoryMeta(category){
-  return palette[categoryColorKeys[category]||"teal"]||palette.teal;
+  const colorKey=(typeof state!=="undefined"&&state?.categoryColors?.[category])||categoryColorKeys[category]||"teal";
+  return palette[colorKey]||palette.teal;
 }

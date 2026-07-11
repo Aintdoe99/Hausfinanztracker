@@ -1,3 +1,9 @@
+# Hausbau-Cockpit 4.5
+
+- Gewerkeverwaltung aktualisiert Symbol und Farbe jetzt auch in der Listenansicht sofort.
+- Das Lineal-Symbol wurde durch ein eindeutig erkennbares horizontales Lineal ersetzt.
+- Dateinamen bleiben bei v41 für einfaches Ersetzen im Repository.
+
 # Hausbau-Cockpit 4.4
 
 - Symboländerungen in der zentralen Gewerkeverwaltung werden überall übernommen.

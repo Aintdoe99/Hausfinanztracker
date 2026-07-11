@@ -1,4 +1,4 @@
-const CACHE="hausbau-cockpit-v4-4";
+const CACHE="hausbau-cockpit-v4-5";
 const ASSETS=[
   "./?v=41","index.html?v=41","styles-v41.css","config-v41.js",
   "app-v41.js","storage-v41.js","manifest.json",

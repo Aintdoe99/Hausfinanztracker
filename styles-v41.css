@@ -1170,3 +1170,19 @@ body,.app,.sheet{background:var(--bg)}
   stroke:currentColor;
   stroke-width:1.9;
 }
+
+
+/* ===== v4.5: Gewerkeverwaltung aktualisiert Symbol und Farbe sofort ===== */
+#categoryList .company-list-item{
+  border-color:color-mix(in srgb,var(--accent) 14%,transparent);
+}
+
+#categoryList .company-list-icon{
+  background:var(--soft)!important;
+  color:var(--accent)!important;
+}
+
+#categoryList .company-list-icon svg{
+  stroke:currentColor!important;
+  color:var(--accent)!important;
+}

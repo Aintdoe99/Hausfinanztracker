@@ -226,6 +226,7 @@ function openCategoryManager(){
   clearCategoryForm();
   renderCategoryList();
   categoryModal.classList.add("open");
+  requestAnimationFrame(renderCategoryList);
 }
 
 function closeCategoryManager(){
@@ -263,6 +264,7 @@ function saveCategoryItem(){
 
   refreshCategorySelects();
   render();
+  renderCategoryList();
   editCategory(name);
   updateCategoryPreview();
   toast("Gewerk gespeichert");
