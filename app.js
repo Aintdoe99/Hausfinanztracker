@@ -119,6 +119,23 @@ function categoryIconSvg(category){
   return `<svg viewBox="0 0 24 24" aria-hidden="true" focusable="false" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round">${paths}</svg>`;
 }
 
+const financeIconTypes={
+  "Eigenkapital":"piggy",
+  "KfW":"landmark",
+  "Banktranche 1":"banknote",
+  "Banktranche 2":"banknote"
+};
+const financeSvgPaths={
+  piggy:'<path d="M19 6.5c-1.3-1.7-3.4-2.5-5.5-2.5-4 0-7.5 2.7-7.5 6.3 0 1 .2 1.9.6 2.7C5.6 14.2 4.5 15.8 4.5 18v1.2a1.3 1.3 0 0 0 1.3 1.3H7v1.5h2V20.5h6V22h2v-2.1c1.7-.7 3-2 3.6-3.7"/><path d="M18.5 6.5 20 5l.5 3"/><path d="M9.5 10h.01"/>',
+  landmark:'<line x1="3" y1="21" x2="21" y2="21"/><line x1="6" y1="18" x2="6" y2="10"/><line x1="10.5" y1="18" x2="10.5" y2="10"/><line x1="13.5" y1="18" x2="13.5" y2="10"/><line x1="18" y1="18" x2="18" y2="10"/><path d="M3 10 12 4l9 6Z"/>',
+  banknote:'<rect x="2.5" y="6.5" width="19" height="11" rx="2"/><circle cx="12" cy="12" r="2.2"/><path d="M6 12h.01M18 12h.01"/>'
+};
+function financeIconSvg(fin){
+  const type=financeIconTypes[fin]||"banknote";
+  const paths=financeSvgPaths[type]||financeSvgPaths.banknote;
+  return `<svg viewBox="0 0 24 24" aria-hidden="true" focusable="false" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round">${paths}</svg>`;
+}
+
 function navTo(id){
   document.querySelectorAll(".screen").forEach(s=>s.classList.toggle("active",s.id===id));
   document.querySelectorAll(".nav-btn").forEach(b=>b.classList.toggle("active",b.dataset.nav===id));
@@ -148,7 +165,7 @@ function render(){
   financeGrid.innerHTML=Object.keys(by).map(k=>{
     const m=metaFor(k);
     return `<div class="finance-card" data-financing="${k}" style="--accent:${m.accent};--soft:${m.soft}">
-      <div class="finance-top"><div class="bubble">●</div><div class="finance-label">${k}</div></div>
+      <div class="finance-top"><div class="bubble">${financeIconSvg(k)}</div><div class="finance-label">${k}</div></div>
       <div class="finance-value">${money(by[k])}</div><div class="finance-caption">verbraucht</div>
     </div>`;
   }).join("");
