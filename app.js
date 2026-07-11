@@ -55,6 +55,39 @@ function escapeHtml(s=""){return String(s).replace(/[&<>"']/g,m=>({"&":"&amp;","
 function toast(msg){const el=document.getElementById("toast");el.textContent=msg;el.classList.add("show");setTimeout(()=>el.classList.remove("show"),1800);}
 function metaFor(fin,override=null){return palette[override||state.colors[fin]||"blue"]||palette.blue;}
 
+
+const categoryIcons={
+  "Grundstück & Nebenkosten":"map-pinned",
+  "Planung & Genehmigungen":"clipboard-check",
+  "Vermessung":"ruler",
+  "Baugrund & Gutachten":"flask-conical",
+  "Erdarbeiten":"construction",
+  "Bodenplatte":"square",
+  "Rohbau / Holzbau":"blocks",
+  "Dach":"house",
+  "Fenster & Türen":"panels-top-left",
+  "Fassade":"layers-3",
+  "Elektro / KNX":"zap",
+  "Heizung":"flame",
+  "Lüftung":"wind",
+  "Sanitär":"droplets",
+  "PV & Speicher":"sun",
+  "Innenausbau":"hammer",
+  "Böden":"grid-2x2",
+  "Malerarbeiten":"paintbrush",
+  "Küche":"cooking-pot",
+  "Bäder":"bath",
+  "Carport":"car-front",
+  "Außenanlagen":"trees",
+  "Baunebenkosten":"receipt-text",
+  "Versicherungen":"shield-check",
+  "Sonstiges":"wrench"
+};
+
+function categoryIcon(category){
+  return categoryIcons[category]||"wrench";
+}
+
 function navTo(id){
   document.querySelectorAll(".screen").forEach(s=>s.classList.toggle("active",s.id===id));
   document.querySelectorAll(".nav-btn").forEach(b=>b.classList.toggle("active",b.dataset.nav===id));
@@ -112,7 +145,7 @@ function renderExpenseList(){
     const m=metaFor(e.financing,e.color);const st=statusOf(e);
     const dateText=st==="Bezahlt"?"Bezahlt am "+dateDE(e.paid):st==="Rechnung offen"?"fällig "+dateDE(e.due):st==="Beauftragt"?"Beauftragt am "+dateDE(e.ordered):"Geplant";
     return `<div class="card expense-card" onclick="openExpense('${e.id}')">
-      <div class="expense-icon" style="--accent:${m.accent};--soft:${m.soft}">•</div>
+      <div class="expense-icon" style="--accent:${m.accent};--soft:${m.soft}" title="${escapeHtml(e.category)}"><i data-lucide="${categoryIcon(e.category)}"></i></div>
       <div class="expense-main">
         <div class="expense-head"><div class="expense-title">${escapeHtml(e.title)}</div><div class="expense-amount">${money(e.amount)}</div></div>
         <div class="expense-meta">${escapeHtml(e.company||e.category)}</div>
@@ -120,6 +153,7 @@ function renderExpenseList(){
       </div>
     </div>`;
   }).join(""):`<div class="card empty">Keine passenden Ausgaben</div>`;
+  if(window.lucide)lucide.createIcons();
 }
 function renderBudgets(){
   budgetList.innerHTML=Object.entries(state.budgets).map(([cat,budget])=>{

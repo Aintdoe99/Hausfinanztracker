@@ -696,3 +696,16 @@ body,.app,.sheet{background:var(--bg)}
     gap:9px;
   }
 }
+
+
+/* ===== v2.9: Gewerkesymbole in der Ausgabenliste ===== */
+.expense-card .expense-icon{
+  position:relative;
+  overflow:hidden;
+}
+.expense-card .expense-icon svg{
+  width:23px;
+  height:23px;
+  stroke:var(--accent);
+  stroke-width:1.9;
+}
