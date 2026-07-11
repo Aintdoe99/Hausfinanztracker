@@ -513,3 +513,84 @@ body,.app,.sheet{background:var(--bg)}
     flex-basis:21px;
   }
 }
+
+
+/* ===== v2.6: Modal-Header sauber zentriert ===== */
+.expense-sheet .premium-head{
+  position:sticky;
+  top:-10px;
+  z-index:5;
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  min-height:62px;
+  padding:8px 4px 14px;
+  margin-bottom:4px;
+  background:rgba(248,249,251,.96);
+  backdrop-filter:blur(12px);
+}
+
+/* Titel liegt geometrisch exakt in der Mitte und wird nicht von Buttons verschoben */
+.expense-sheet .premium-head h2{
+  position:absolute;
+  left:50%;
+  transform:translateX(-50%);
+  width:max-content;
+  max-width:42%;
+  margin:0;
+  white-space:nowrap;
+  overflow:hidden;
+  text-overflow:ellipsis;
+  text-align:center;
+  font-size:20px;
+  line-height:1.15;
+  pointer-events:none;
+}
+
+.expense-sheet .premium-head > .link-btn:first-child{
+  flex:0 0 auto;
+  margin-right:auto;
+}
+
+.expense-sheet .premium-head .sheet-actions{
+  display:flex;
+  align-items:center;
+  justify-content:flex-end;
+  gap:10px;
+  margin-left:auto;
+  flex:0 0 auto;
+}
+
+.expense-sheet .premium-head .link-btn{
+  font-size:14px;
+  padding:6px 2px;
+  white-space:nowrap;
+}
+
+/* Beim Bearbeiten stehen rechts zwei Aktionen; Titel bekommt etwas weniger Breite */
+.expense-sheet .premium-head:has(#deleteExpense[style*="inline-block"]) h2{
+  max-width:34%;
+  font-size:18px;
+}
+
+@media(max-width:430px){
+  .expense-sheet .premium-head{
+    min-height:60px;
+    padding-left:2px;
+    padding-right:2px;
+  }
+  .expense-sheet .premium-head h2{
+    max-width:40%;
+    font-size:19px;
+  }
+  .expense-sheet .premium-head:has(#deleteExpense[style*="inline-block"]) h2{
+    max-width:31%;
+    font-size:17px;
+  }
+  .expense-sheet .premium-head .sheet-actions{
+    gap:6px;
+  }
+  .expense-sheet .premium-head .link-btn{
+    font-size:13px;
+  }
+}

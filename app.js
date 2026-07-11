@@ -196,7 +196,7 @@ function openExpense(id=null){
   draftDocs=structuredClone(e?.docs||[]);draftExpenseColor=e?.color||null;renderExpenseColorPicker();renderDraftDocs();expenseModal.classList.add("open");if(window.lucide)lucide.createIcons();
 }
 function closeExpense(){expenseModal.classList.remove("open");}
-async function saveExpense(){
+async function saveExpenseRecord(){
   const title=fTitle.value.trim();if(!title){toast("Bitte eine Bezeichnung eingeben");return;}
   const obj={id:editingId||crypto.randomUUID(),category:fCategory.value,title,company:fCompany.value.trim(),amount:Number(fAmount.value||0),financing:fFinancing.value,ordered:fOrdered.value,received:fReceived.value,due:fDue.value,paid:fPaid.value,note:fNote.value.trim(),color:draftExpenseColor,docs:draftDocs};
   if(editingId){const i=state.expenses.findIndex(x=>x.id===editingId);state.expenses[i]=obj;}else state.expenses.push(obj);
@@ -267,7 +267,10 @@ async function importBackup(file){
 fCategory.innerHTML=categories.map(c=>`<option>${c}</option>`).join("");
 document.querySelectorAll("[data-nav]").forEach(b=>b.addEventListener("click",()=>navTo(b.dataset.nav)));
 settingsBtn.onclick=()=>navTo("more");
-inlineAddExpense.onclick=()=>openExpense();cancelExpense.onclick=closeExpense;saveExpense.onclick=saveExpense;deleteExpense.onclick=deleteExpenseItem;
+inlineAddExpense.onclick=()=>openExpense();
+document.getElementById("cancelExpense").onclick=closeExpense;
+document.getElementById("saveExpense").onclick=saveExpenseRecord;
+document.getElementById("deleteExpense").onclick=deleteExpenseItem;
 expenseModal.addEventListener("click",e=>{if(e.target.id==="expenseModal")closeExpense();});
 document.querySelectorAll(".chip").forEach(c=>c.onclick=()=>{document.querySelectorAll(".chip").forEach(x=>x.classList.remove("active"));c.classList.add("active");currentFilter=c.dataset.filter;currentFinancing=null;renderExpenseList();});
 openInvoicesCard.onclick=()=>showExpenses("Rechnung offen");openInvoicesCard.onkeydown=e=>{if(e.key==="Enter"||e.key===" "){e.preventDefault();showExpenses("Rechnung offen");}};
