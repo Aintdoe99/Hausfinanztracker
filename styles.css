@@ -709,3 +709,21 @@ body,.app,.sheet{background:var(--bg)}
   stroke:var(--accent);
   stroke-width:1.9;
 }
+
+
+/* ===== v3.0: Gewerke-Symbole ohne externe Icon-Ersetzung ===== */
+.expense-card .expense-icon{
+  color:var(--accent);
+}
+.expense-card .expense-icon > svg{
+  display:block!important;
+  width:24px!important;
+  height:24px!important;
+  min-width:24px!important;
+  min-height:24px!important;
+  color:var(--accent)!important;
+  stroke:currentColor!important;
+  stroke-width:1.9!important;
+  opacity:1!important;
+  visibility:visible!important;
+}
