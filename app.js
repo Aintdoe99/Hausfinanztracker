@@ -121,14 +121,14 @@ function categoryIconSvg(category){
 
 
 const financeIconTypes={
-  "Eigenkapital":"wallet",
+  "Eigenkapital":"piggy",
   "KfW":"landmark",
   "Banktranche 1":"banknote",
   "Banktranche 2":"banknote"
 };
 
 const financeSvgPaths={
-  wallet:'<path d="M4 6.5A2.5 2.5 0 0 1 6.5 4H18a2 2 0 0 1 2 2v2H7a3 3 0 0 0 0 6h13v4a2 2 0 0 1-2 2H6.5A2.5 2.5 0 0 1 4 17.5v-11Z"/><path d="M7 8h13v6H7a3 3 0 0 1 0-6Z"/><circle cx="17" cy="11" r="1"/>',
+  piggy:'<path d="M5.4 9.2C6.8 7.2 9.2 6 12 6h3.1l1.7-1.5.7 2.5c1.5.8 2.5 2.3 2.5 4v1h1.5v3H19c-.5 1.2-1.4 2.2-2.6 2.8V20h-3v-2H9.5v2h-3v-3.1C4.9 15.9 4 14.5 4 13c0-1.4.5-2.7 1.4-3.8Z"/><path d="M10 6V4.8h4V6M9.5 9h4"/><circle cx="17" cy="10" r=".7" fill="currentColor" stroke="none"/><path d="M4.2 10.5C2.5 10.5 2 9.1 2.9 8.3"/>',
   landmark:'<path d="M3 10 12 4l9 6"/><path d="M5 10h14M6 10v8M10 10v8M14 10v8M18 10v8M4 18h16M3 21h18"/>',
   banknote:'<rect x="3" y="6" width="18" height="12" rx="2"/><circle cx="12" cy="12" r="2.4"/><path d="M6.5 9.5h.01M17.5 14.5h.01"/>'
 };
@@ -218,8 +218,10 @@ function render(){
 function summaryRow(e){
   const m=metaFor(e.financing,e.color);
   return `<div class="summary-row" onclick="openExpense('${e.id}')">
-    <div class="summary-left"><span class="dot" style="--c:${m.accent}"></span>
-      <div><div class="summary-name">${escapeHtml(e.title)}</div><div class="summary-sub">${statusOf(e)}</div></div></div>
+    <div class="summary-left">
+      <span class="summary-category-icon" style="--accent:${m.accent};--soft:${m.soft}" title="${escapeHtml(e.category)}">${categoryIconSvg(e.category)}</span>
+      <div><div class="summary-name">${escapeHtml(e.title)}</div><div class="summary-sub">${statusOf(e)}</div></div>
+    </div>
     <div class="summary-value">${money(e.amount)}</div>
   </div>`;
 }
@@ -316,12 +318,22 @@ function setExpenseColor(key){
 
 function updateCategoryFieldIcon(){
   const icon=document.getElementById("fCategoryIcon");
-  if(!icon)return;
-  const category=fCategory.value||categories[0];
+  const select=document.getElementById("fCategory");
+  if(!icon||!select)return;
+
+  const category=select.value||categories[0];
   const m=categoryMeta(category);
+  const type=categoryIconTypes[category]||"tool";
+  const paths=categorySvgPaths[type]||categorySvgPaths.tool;
+
   icon.style.setProperty("--category-accent",m.accent);
   icon.style.setProperty("--category-soft",m.soft);
-  icon.innerHTML=categoryIconSvg(category);
+
+  const template=document.createElement("template");
+  template.innerHTML=`<svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"
+    fill="none" stroke="${m.accent}" stroke-width="1.9"
+    stroke-linecap="round" stroke-linejoin="round">${paths}</svg>`;
+  icon.replaceChildren(template.content.cloneNode(true));
 }
 
 function openExpense(id=null){
@@ -334,7 +346,7 @@ function openExpense(id=null){
   fCategory.value=e?.category||categories[0];updateCategoryFieldIcon();fTitle.value=e?.title||"";fCompany.value=e?.company||"";
   fAmount.value=e?.amount||"";fFinancing.value=e?.financing||"Eigenkapital";fOrdered.value=e?.ordered||"";
   fReceived.value=e?.received||"";fDue.value=e?.due||"";fPaid.value=e?.paid||"";fNote.value=e?.note||"";noteCount.textContent=fNote.value.length;
-  draftDocs=structuredClone(e?.docs||[]);draftExpenseColor=e?.color||null;renderExpenseColorPicker();renderDraftDocs();expenseModal.classList.add("open");if(window.lucide)lucide.createIcons();
+  draftDocs=structuredClone(e?.docs||[]);draftExpenseColor=e?.color||null;renderExpenseColorPicker();renderDraftDocs();expenseModal.classList.add("open");if(window.lucide)lucide.createIcons();updateCategoryFieldIcon();
 }
 function closeExpense(){expenseModal.classList.remove("open");}
 async function saveExpenseRecord(){
@@ -416,7 +428,7 @@ document.getElementById("deleteExpense").addEventListener("click",deleteExpenseI
 expenseModal.addEventListener("click",e=>{if(e.target.id==="expenseModal")closeExpense();});
 document.querySelectorAll(".chip").forEach(c=>c.onclick=()=>{document.querySelectorAll(".chip").forEach(x=>x.classList.remove("active"));c.classList.add("active");currentFilter=c.dataset.filter;currentFinancing=null;renderExpenseList();});
 openInvoicesCard.onclick=()=>showExpenses("Rechnung offen");openInvoicesCard.onkeydown=e=>{if(e.key==="Enter"||e.key===" "){e.preventDefault();showExpenses("Rechnung offen");}};
-fCategory.addEventListener("change",updateCategoryFieldIcon);
+fCategory.addEventListener("change",()=>requestAnimationFrame(updateCategoryFieldIcon));
 fFinancing.addEventListener("change",()=>{if(draftExpenseColor===null)renderExpenseColorPicker();});
 fNote.addEventListener("input",()=>noteCount.textContent=fNote.value.length);
 addPdfBtn.onclick=()=>pdfInput.click();pdfInput.onchange=e=>addPdfs([...e.target.files]);

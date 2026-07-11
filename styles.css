@@ -831,3 +831,52 @@ body,.app,.sheet{background:var(--bg)}
   opacity:1!important;
   visibility:visible!important;
 }
+
+
+/* ===== v3.4: Symbolfix Formular + letzte Ausgaben ===== */
+
+.summary-category-icon{
+  width:40px;
+  height:40px;
+  min-width:40px;
+  border-radius:13px;
+  display:grid;
+  place-items:center;
+  background:var(--soft);
+  color:var(--accent);
+}
+
+.summary-category-icon > svg{
+  display:block!important;
+  width:21px!important;
+  height:21px!important;
+  stroke:var(--accent)!important;
+  stroke-width:1.9!important;
+  opacity:1!important;
+  visibility:visible!important;
+}
+
+.expense-sheet #fCategoryIcon{
+  display:grid!important;
+  place-items:center!important;
+  overflow:visible!important;
+}
+
+.expense-sheet #fCategoryIcon > svg{
+  display:block!important;
+  width:20px!important;
+  height:20px!important;
+  min-width:20px!important;
+  min-height:20px!important;
+  opacity:1!important;
+  visibility:visible!important;
+  overflow:visible!important;
+}
+
+
+/* ===== v3.5: klareres Sparschwein für Eigenkapital ===== */
+.finance-card[data-financing="Eigenkapital"] .bubble > svg{
+  width:25px!important;
+  height:25px!important;
+  stroke-width:1.75!important;
+}
