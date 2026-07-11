@@ -1,3 +1,18 @@
+# Hausbau-Cockpit 4.7
+
+- Budgetsummen-Kachel um „Verbraucht“ und „Verfügbar“ ergänzt.
+- Verbraucht summiert automatisch alle Ausgaben, deren Gewerk einen Budgetposten besitzt.
+- Verfügbar entspricht der Summe der Gewerkebudgets abzüglich dieser Ausgaben.
+- Das manuell gesetzte Gesamtbudget auf der Startseite bleibt unabhängig.
+- Dateinamen bleiben bei v41 für einfaches Ersetzen im Repository.
+
+# Hausbau-Cockpit 4.6
+
+- Neue Kachel oberhalb der Budgetliste mit der Summe aller Gewerkebudgets.
+- Das manuell festgelegte Gesamtbudget auf der Übersicht bleibt davon vollständig getrennt.
+- Die Summe aktualisiert sich automatisch bei Änderungen an Budgetposten.
+- Dateinamen bleiben bei v41 für einfaches Ersetzen im Repository.
+
 # Hausbau-Cockpit 4.5
 
 - Gewerkeverwaltung aktualisiert Symbol und Farbe jetzt auch in der Listenansicht sofort.

@@ -365,6 +365,18 @@ function renderExpenseList(){
   }).join(""):`<div class="card empty">Keine passenden Ausgaben</div>`;
 }
 function renderBudgets(){
+  const totalBudget=Object.values(state.budgets).reduce((sum,value)=>sum+Number(value||0),0);
+  const budgetCategories=new Set(Object.keys(state.budgets));
+  const totalUsed=state.expenses
+    .filter(expense=>budgetCategories.has(expense.category))
+    .reduce((sum,expense)=>sum+Number(expense.amount||0),0);
+  const totalAvailable=totalBudget-totalUsed;
+
+  budgetTotalValue.textContent=money(totalBudget);
+  budgetUsedValue.textContent=money(totalUsed);
+  budgetAvailableValue.textContent=money(totalAvailable);
+  budgetAvailableValue.classList.toggle("negative",totalAvailable<0);
+
   budgetList.innerHTML=Object.entries(state.budgets).map(([cat,budget])=>{
     const spent=state.expenses.filter(e=>e.category===cat).reduce((s,e)=>s+Number(e.amount||0),0);
     const pct=budget?Math.min(100,spent/budget*100):0;

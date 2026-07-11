@@ -1,7 +1,7 @@
 {
   "name": "Hausbau-Cockpit",
   "short_name": "Hausbau",
-  "start_url": "./?v=45",
+  "start_url": "./?v=47budget",
   "display": "standalone",
   "background_color": "#f5f6f8",
   "theme_color": "#0b98a5",

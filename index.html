@@ -78,6 +78,25 @@
         <h2>Budgetposten</h2>
         <button id="addBudgetBtn">+ Hinzufügen</button>
       </div>
+
+      <div class="card budget-total-card">
+        <div class="budget-total-label">Budgetposten gesamt</div>
+        <div class="budget-total-value" id="budgetTotalValue">0,00 €</div>
+        <div class="budget-total-note">Summe aller Gewerkebudgets</div>
+
+        <div class="budget-total-breakdown">
+          <div class="budget-total-metric">
+            <span>Verbraucht</span>
+            <strong id="budgetUsedValue">0,00 €</strong>
+          </div>
+          <div class="budget-total-divider"></div>
+          <div class="budget-total-metric">
+            <span>Verfügbar</span>
+            <strong id="budgetAvailableValue">0,00 €</strong>
+          </div>
+        </div>
+      </div>
+
       <div class="card panel" id="budgetList"></div>
     </section>
 
