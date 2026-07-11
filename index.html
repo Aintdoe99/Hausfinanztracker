@@ -102,6 +102,20 @@
           </div>
         </div>
         <div class="row">
+          <div>
+            <b>Gewerke verwalten</b>
+            <div class="summary-sub"><span id="categoryCount">0</span> zentrale Gewerke für Budget, Ausgaben und Firmen</div>
+          </div>
+          <button class="btn secondary" id="manageCategoriesBtn">Verwalten</button>
+        </div>
+        <div class="row">
+          <div>
+            <b>Firmen & Handwerker</b>
+            <div class="summary-sub"><span id="companyCount">0</span> Firmen nach Gewerk gespeichert</div>
+          </div>
+          <button class="btn secondary" id="manageCompaniesBtn">Verwalten</button>
+        </div>
+        <div class="row">
           <div><b>Backup exportieren</b><div class="summary-sub">JSON inklusive PDFs</div></div>
           <button class="btn" id="exportBtn">Export</button>
         </div>
@@ -158,13 +172,19 @@
         </span>
       </label>
 
-      <label class="premium-field">
+      <div class="premium-field select-field company-picker-field">
         <span class="field-icon" data-lucide="building-2"></span>
         <span class="field-stack">
           <span class="field-label">Firma / Empfänger</span>
-          <input id="fCompany" placeholder="Firma / Empfänger" />
+          <select id="fCompany">
+            <option value="">Keine Firma ausgewählt</option>
+          </select>
         </span>
-      </label>
+        <button class="company-add-inline" id="addCompanyFromExpense" type="button" aria-label="Neue Firma anlegen" title="Neue Firma anlegen">
+          <span data-lucide="plus"></span>
+        </button>
+      </div>
+      <div class="company-contact-hint" id="companyContactHint"></div>
 
       <label class="premium-field compact-field">
         <span class="field-icon" data-lucide="euro"></span>
@@ -252,12 +272,127 @@
       <button class="link-btn" id="saveBudget">Speichern</button>
     </div>
     <div class="card form-card">
-      <div class="field"><label>Gewerk / Posten</label><input id="bCategory" placeholder="z. B. Außenanlagen" /></div>
+      <div class="field"><label>Gewerk</label><select id="bCategory"></select></div>
       <div class="field"><label>Budget</label><input id="bAmount" type="number" min="0" step="0.01" placeholder="0,00" /></div>
     </div>
     <div class="modal-footer">
       <button class="btn danger" id="deleteBudget">Budgetposten löschen</button>
     </div>
+  </div>
+</div>
+
+<div class="modal" id="companyModal">
+  <div class="sheet company-sheet">
+    <div class="sheet-grabber"></div>
+    <div class="sheet-head">
+      <button class="link-btn" id="cancelCompany">Schließen</button>
+      <h2 id="companyModalTitle">Firmen</h2>
+      <button class="link-btn" id="saveCompany">Speichern</button>
+    </div>
+
+    <div class="card form-card company-form-card">
+      <div class="field">
+        <label>Firmenname *</label>
+        <input id="cName" placeholder="z. B. Stefan Heinle" />
+      </div>
+      <div class="field">
+        <label>Ansprechpartner</label>
+        <input id="cContactPerson" placeholder="z. B. Frau Müller" />
+      </div>
+      <div class="field">
+        <label>Telefon</label>
+        <input id="cPhone" inputmode="tel" placeholder="z. B. 09564 123456" />
+      </div>
+      <div class="field">
+        <label>E-Mail</label>
+        <input id="cEmail" inputmode="email" placeholder="z. B. info@firma.de" />
+      </div>
+      <div class="field">
+        <label>Gewerk *</label>
+        <select id="cCategory"></select>
+      </div>
+    </div>
+
+    <div class="company-actions">
+      <button class="btn danger" id="deleteCompany" type="button">Firma löschen</button>
+      <button class="btn secondary" id="newCompany" type="button">Neue Firma</button>
+    </div>
+
+    <div class="company-list-head">
+      <h3>Gespeicherte Firmen</h3>
+      <span class="summary-sub">Antippen zum Bearbeiten</span>
+    </div>
+    <div id="companyList" class="company-list"></div>
+  </div>
+</div>
+
+<div class="modal" id="categoryModal">
+  <div class="sheet category-sheet">
+    <div class="sheet-grabber"></div>
+    <div class="sheet-head">
+      <button class="link-btn" id="cancelCategory">Schließen</button>
+      <h2 id="categoryModalTitle">Gewerke</h2>
+      <button class="link-btn" id="saveCategory">Speichern</button>
+    </div>
+
+    <div class="card form-card category-form-card">
+      <div class="field">
+        <label>Bezeichnung *</label>
+        <input id="gName" placeholder="z. B. Elektro / KNX" />
+      </div>
+      <div class="field">
+        <label>Symbol</label>
+        <select id="gIcon">
+          <option value="tool">Werkzeug</option>
+          <option value="bolt">Blitz</option>
+          <option value="house">Haus</option>
+          <option value="ruler">Lineal</option>
+          <option value="flask">Gutachten</option>
+          <option value="construction">Baustelle</option>
+          <option value="blocks">Bausteine</option>
+          <option value="window">Fenster</option>
+          <option value="layers">Schichten</option>
+          <option value="flame">Heizung</option>
+          <option value="wind">Lüftung</option>
+          <option value="drop">Wasser</option>
+          <option value="sun">Sonne / PV</option>
+          <option value="hammer">Hammer</option>
+          <option value="grid">Boden</option>
+          <option value="brush">Maler</option>
+          <option value="pot">Küche</option>
+          <option value="bath">Bad</option>
+          <option value="car">Auto / Carport</option>
+          <option value="tree">Garten</option>
+          <option value="receipt">Beleg</option>
+          <option value="shield">Versicherung</option>
+          <option value="map">Grundstück</option>
+          <option value="clipboard">Planung</option>
+        </select>
+      </div>
+      <div class="field">
+        <label>Farbe</label>
+        <select id="gColor">
+          <option value="green">Mint</option>
+          <option value="purple">Lavendel</option>
+          <option value="yellow">Gelb</option>
+          <option value="blue">Blau</option>
+          <option value="rose">Rosé</option>
+          <option value="teal">Türkis</option>
+          <option value="red">Rot</option>
+        </select>
+      </div>
+    </div>
+
+    <div class="company-actions">
+      <button class="btn danger" id="deleteCategory" type="button">Gewerk löschen</button>
+      <button class="btn secondary" id="newCategory" type="button">Neues Gewerk</button>
+    </div>
+
+    <div class="company-list-head">
+      <h3>Zentrale Gewerke</h3>
+      <span class="summary-sub">Antippen zum Bearbeiten</span>
+    </div>
+    <div id="categoryList" class="company-list"></div>
   </div>
 </div>
 

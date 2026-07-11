@@ -71,7 +71,7 @@ const categorySvgPaths={
 };
 
 function categoryIconSvg(category){
-  const type=categoryIconTypes[category]||"tool";
+  const type=(typeof state!=="undefined"&&state?.categoryIcons?.[category])||categoryIconTypes[category]||"tool";
   const paths=categorySvgPaths[type]||categorySvgPaths.tool;
   return `<svg viewBox="0 0 24 24" aria-hidden="true" focusable="false" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round">${paths}</svg>`;
 }

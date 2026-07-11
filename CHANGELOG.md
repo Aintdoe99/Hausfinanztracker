@@ -1,3 +1,21 @@
+# Hausbau-Cockpit 4.3
+
+- Zentrale Gewerkeverwaltung für Ausgaben, Budget und Firmen.
+- Gewerke können mit Bezeichnung, Symbol und Farbe verwaltet werden.
+- Umbenennungen werden automatisch in Ausgaben, Firmen, Budgets, Farben und Symbolen synchronisiert.
+- Budgetposten wählen nur noch aus der zentralen Gewerkeliste.
+- Firmendatenbank erweitert um Firmenname, Ansprechpartner, Telefon, E-Mail und Gewerk.
+- Dateinamen bleiben unverändert, damit das Update ersetzend hochgeladen werden kann.
+
+# Hausbau-Cockpit 4.2
+
+- Schlanke Firmen-/Handwerker-Datenbank mit Name, Gewerk und Kontakt.
+- Firmenauswahl im Ausgabenformular wird automatisch nach Gewerk gefiltert.
+- Neue Firmen können direkt aus dem Ausgabenformular angelegt werden.
+- Bestehende Firmennamen aus älteren Ausgaben werden automatisch übernommen.
+- Firmen lassen sich unter Mehr verwalten, bearbeiten und löschen.
+- Bestehende Dateinamen bleiben unverändert, damit Updates direkt ersetzt werden können.
+
 # Hausbau-Cockpit 4.1
 
 - Finanzierungsarten gelten erst bei eingetragenem Bezahldatum als verbraucht.
