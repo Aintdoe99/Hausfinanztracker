@@ -119,21 +119,57 @@ function categoryIconSvg(category){
   return `<svg viewBox="0 0 24 24" aria-hidden="true" focusable="false" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round">${paths}</svg>`;
 }
 
+
 const financeIconTypes={
-  "Eigenkapital":"piggy",
+  "Eigenkapital":"wallet",
   "KfW":"landmark",
   "Banktranche 1":"banknote",
   "Banktranche 2":"banknote"
 };
+
 const financeSvgPaths={
-  piggy:'<path d="M19 6.5c-1.3-1.7-3.4-2.5-5.5-2.5-4 0-7.5 2.7-7.5 6.3 0 1 .2 1.9.6 2.7C5.6 14.2 4.5 15.8 4.5 18v1.2a1.3 1.3 0 0 0 1.3 1.3H7v1.5h2V20.5h6V22h2v-2.1c1.7-.7 3-2 3.6-3.7"/><path d="M18.5 6.5 20 5l.5 3"/><path d="M9.5 10h.01"/>',
-  landmark:'<line x1="3" y1="21" x2="21" y2="21"/><line x1="6" y1="18" x2="6" y2="10"/><line x1="10.5" y1="18" x2="10.5" y2="10"/><line x1="13.5" y1="18" x2="13.5" y2="10"/><line x1="18" y1="18" x2="18" y2="10"/><path d="M3 10 12 4l9 6Z"/>',
-  banknote:'<rect x="2.5" y="6.5" width="19" height="11" rx="2"/><circle cx="12" cy="12" r="2.2"/><path d="M6 12h.01M18 12h.01"/>'
+  wallet:'<path d="M4 6.5A2.5 2.5 0 0 1 6.5 4H18a2 2 0 0 1 2 2v2H7a3 3 0 0 0 0 6h13v4a2 2 0 0 1-2 2H6.5A2.5 2.5 0 0 1 4 17.5v-11Z"/><path d="M7 8h13v6H7a3 3 0 0 1 0-6Z"/><circle cx="17" cy="11" r="1"/>',
+  landmark:'<path d="M3 10 12 4l9 6"/><path d="M5 10h14M6 10v8M10 10v8M14 10v8M18 10v8M4 18h16M3 21h18"/>',
+  banknote:'<rect x="3" y="6" width="18" height="12" rx="2"/><circle cx="12" cy="12" r="2.4"/><path d="M6.5 9.5h.01M17.5 14.5h.01"/>'
 };
+
 function financeIconSvg(fin){
   const type=financeIconTypes[fin]||"banknote";
   const paths=financeSvgPaths[type]||financeSvgPaths.banknote;
   return `<svg viewBox="0 0 24 24" aria-hidden="true" focusable="false" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round">${paths}</svg>`;
+}
+
+
+const categoryColorKeys={
+  "Grundstück & Nebenkosten":"teal",
+  "Planung & Genehmigungen":"purple",
+  "Vermessung":"green",
+  "Baugrund & Gutachten":"purple",
+  "Erdarbeiten":"yellow",
+  "Bodenplatte":"blue",
+  "Rohbau / Holzbau":"rose",
+  "Dach":"rose",
+  "Fenster & Türen":"blue",
+  "Fassade":"yellow",
+  "Elektro / KNX":"green",
+  "Heizung":"rose",
+  "Lüftung":"teal",
+  "Sanitär":"blue",
+  "PV & Speicher":"yellow",
+  "Innenausbau":"yellow",
+  "Böden":"teal",
+  "Malerarbeiten":"purple",
+  "Küche":"rose",
+  "Bäder":"blue",
+  "Carport":"blue",
+  "Außenanlagen":"green",
+  "Baunebenkosten":"teal",
+  "Versicherungen":"purple",
+  "Sonstiges":"teal"
+};
+
+function categoryMeta(category){
+  return palette[categoryColorKeys[category]||"teal"]||palette.teal;
 }
 
 function navTo(id){
@@ -206,10 +242,19 @@ function renderBudgets(){
   budgetList.innerHTML=Object.entries(state.budgets).map(([cat,budget])=>{
     const spent=state.expenses.filter(e=>e.category===cat).reduce((s,e)=>s+Number(e.amount||0),0);
     const pct=budget?Math.min(100,spent/budget*100):0;
-    const accent="#3277C8";
-    return `<button type="button" class="budget-row budget-row-button" data-budget-key="${encodeURIComponent(cat)}" style="--accent:${accent};--pct:${pct}%">
-      <div class="budget-head"><div><div class="budget-title">${escapeHtml(cat)}</div><div class="budget-sub">${money(spent)} von ${money(budget)}</div></div><b>${Math.round(pct)} %</b></div>
-      <div class="budget-bar"><span></span></div>
+    const m=categoryMeta(cat);
+    return `<button type="button" class="budget-row budget-row-button budget-row-with-icon" data-budget-key="${encodeURIComponent(cat)}" style="--accent:${m.accent};--soft:${m.soft};--pct:${pct}%">
+      <div class="budget-category-icon" title="${escapeHtml(cat)}">${categoryIconSvg(cat)}</div>
+      <div class="budget-content">
+        <div class="budget-head">
+          <div>
+            <div class="budget-title">${escapeHtml(cat)}</div>
+            <div class="budget-sub">${money(spent)} von ${money(budget)}</div>
+          </div>
+          <b>${Math.round(pct)} %</b>
+        </div>
+        <div class="budget-bar"><span></span></div>
+      </div>
     </button>`;
   }).join("")||`<div class="empty">Noch keine Budgets erfasst</div>`;
 
@@ -217,6 +262,7 @@ function renderBudgets(){
     row.addEventListener("click",()=>openBudgetEditor(decodeURIComponent(row.dataset.budgetKey)));
   });
 }
+
 function renderDocuments(){
   const items=[];
   state.expenses.forEach(e=>(e.docs||[]).forEach(d=>items.push({e,d})));
@@ -267,6 +313,17 @@ function setExpenseColor(key){
   renderExpenseColorPicker();
 }
 
+
+function updateCategoryFieldIcon(){
+  const icon=document.getElementById("fCategoryIcon");
+  if(!icon)return;
+  const category=fCategory.value||categories[0];
+  const m=categoryMeta(category);
+  icon.style.setProperty("--category-accent",m.accent);
+  icon.style.setProperty("--category-soft",m.soft);
+  icon.innerHTML=categoryIconSvg(category);
+}
+
 function openExpense(id=null){
   editingId=id;const e=id?state.expenses.find(x=>x.id===id):null;
   const head=document.querySelector("#expenseModal .premium-head");
@@ -274,7 +331,7 @@ function openExpense(id=null){
   head.classList.toggle("mode-new",!e);
   modalTitle.textContent=e?"Ausgabe bearbeiten":"Neue Ausgabe";
   deleteExpense.style.display=e?"inline-block":"none";
-  fCategory.value=e?.category||categories[0];fTitle.value=e?.title||"";fCompany.value=e?.company||"";
+  fCategory.value=e?.category||categories[0];updateCategoryFieldIcon();fTitle.value=e?.title||"";fCompany.value=e?.company||"";
   fAmount.value=e?.amount||"";fFinancing.value=e?.financing||"Eigenkapital";fOrdered.value=e?.ordered||"";
   fReceived.value=e?.received||"";fDue.value=e?.due||"";fPaid.value=e?.paid||"";fNote.value=e?.note||"";noteCount.textContent=fNote.value.length;
   draftDocs=structuredClone(e?.docs||[]);draftExpenseColor=e?.color||null;renderExpenseColorPicker();renderDraftDocs();expenseModal.classList.add("open");if(window.lucide)lucide.createIcons();
@@ -349,6 +406,7 @@ async function importBackup(file){
 }
 
 fCategory.innerHTML=categories.map(c=>`<option>${c}</option>`).join("");
+updateCategoryFieldIcon();
 document.querySelectorAll("[data-nav]").forEach(b=>b.addEventListener("click",()=>navTo(b.dataset.nav)));
 settingsBtn.onclick=()=>navTo("more");
 document.getElementById("inlineAddExpense").addEventListener("click",()=>openExpense());
@@ -358,6 +416,7 @@ document.getElementById("deleteExpense").addEventListener("click",deleteExpenseI
 expenseModal.addEventListener("click",e=>{if(e.target.id==="expenseModal")closeExpense();});
 document.querySelectorAll(".chip").forEach(c=>c.onclick=()=>{document.querySelectorAll(".chip").forEach(x=>x.classList.remove("active"));c.classList.add("active");currentFilter=c.dataset.filter;currentFinancing=null;renderExpenseList();});
 openInvoicesCard.onclick=()=>showExpenses("Rechnung offen");openInvoicesCard.onkeydown=e=>{if(e.key==="Enter"||e.key===" "){e.preventDefault();showExpenses("Rechnung offen");}};
+fCategory.addEventListener("change",updateCategoryFieldIcon);
 fFinancing.addEventListener("change",()=>{if(draftExpenseColor===null)renderExpenseColorPicker();});
 fNote.addEventListener("input",()=>noteCount.textContent=fNote.value.length);
 addPdfBtn.onclick=()=>pdfInput.click();pdfInput.onchange=e=>addPdfs([...e.target.files]);

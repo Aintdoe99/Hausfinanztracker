@@ -727,3 +727,107 @@ body,.app,.sheet{background:var(--bg)}
   opacity:1!important;
   visibility:visible!important;
 }
+
+
+/* ===== v3.2: vollständiges Icon-System ===== */
+
+/* Finanzierungskarten */
+.finance-card .bubble{
+  color:var(--accent);
+}
+.finance-card .bubble > svg{
+  display:block!important;
+  width:22px!important;
+  height:22px!important;
+  color:var(--accent)!important;
+  stroke:currentColor!important;
+  stroke-width:1.9!important;
+  opacity:1!important;
+  visibility:visible!important;
+}
+
+/* Einzelne Ausgaben / Gewerke */
+.expense-card .expense-icon{
+  color:var(--accent);
+}
+.expense-card .expense-icon > svg{
+  display:block!important;
+  width:24px!important;
+  height:24px!important;
+  color:var(--accent)!important;
+  stroke:currentColor!important;
+  stroke-width:1.9!important;
+  opacity:1!important;
+  visibility:visible!important;
+}
+
+/* Budget-Gewerke */
+.budget-row-with-icon{
+  display:grid!important;
+  grid-template-columns:48px minmax(0,1fr)!important;
+  align-items:center!important;
+  gap:13px!important;
+  width:100%;
+  text-align:left;
+}
+
+.budget-category-icon{
+  width:44px;
+  height:44px;
+  border-radius:14px;
+  display:grid;
+  place-items:center;
+  background:var(--soft);
+  color:var(--accent);
+}
+
+.budget-category-icon > svg{
+  display:block!important;
+  width:23px!important;
+  height:23px!important;
+  color:var(--accent)!important;
+  stroke:currentColor!important;
+  stroke-width:1.9!important;
+  opacity:1!important;
+  visibility:visible!important;
+}
+
+.budget-content{
+  min-width:0;
+}
+
+@media(max-width:430px){
+  .budget-row-with-icon{
+    grid-template-columns:42px minmax(0,1fr)!important;
+    gap:10px!important;
+  }
+
+  .budget-category-icon{
+    width:40px;
+    height:40px;
+    border-radius:12px;
+  }
+
+  .budget-category-icon > svg{
+    width:21px!important;
+    height:21px!important;
+  }
+}
+
+
+/* ===== v3.3: dynamisches Gewerke-Symbol im Ausgabenformular ===== */
+.expense-sheet .dynamic-category-icon{
+  background:var(--category-soft,#eef9fa)!important;
+  color:var(--category-accent,var(--teal))!important;
+}
+
+.expense-sheet .dynamic-category-icon > svg{
+  display:block!important;
+  width:18px!important;
+  height:18px!important;
+  color:var(--category-accent,var(--teal))!important;
+  stroke:currentColor!important;
+  stroke-width:1.9!important;
+  opacity:1!important;
+  visibility:visible!important;
+}
