@@ -188,6 +188,9 @@ function setExpenseColor(key){
 
 function openExpense(id=null){
   editingId=id;const e=id?state.expenses.find(x=>x.id===id):null;
+  const head=document.querySelector("#expenseModal .premium-head");
+  head.classList.toggle("mode-edit",!!e);
+  head.classList.toggle("mode-new",!e);
   modalTitle.textContent=e?"Ausgabe bearbeiten":"Neue Ausgabe";
   deleteExpense.style.display=e?"inline-block":"none";
   fCategory.value=e?.category||categories[0];fTitle.value=e?.title||"";fCompany.value=e?.company||"";
