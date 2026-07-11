@@ -37,6 +37,7 @@ let currentFinancing=null;
 let editingId=null;
 let editingBudgetKey=null;
 let draftDocs=[];
+let draftExpenseColor=null;
 
 function loadState(){
   try{
@@ -52,7 +53,7 @@ function dateDE(v){return v?new Date(v+"T00:00:00").toLocaleDateString("de-DE"):
 function statusOf(e){if(e.paid)return"Bezahlt";if(e.received)return"Rechnung offen";if(e.ordered)return"Beauftragt";return"Geplant";}
 function escapeHtml(s=""){return String(s).replace(/[&<>"']/g,m=>({"&":"&amp;","<":"&lt;",">":"&gt;","\"":"&quot;","'":"&#039;"}[m]));}
 function toast(msg){const el=document.getElementById("toast");el.textContent=msg;el.classList.add("show");setTimeout(()=>el.classList.remove("show"),1800);}
-function metaFor(fin){return palette[state.colors[fin]||"blue"]||palette.blue;}
+function metaFor(fin,override=null){return palette[override||state.colors[fin]||"blue"]||palette.blue;}
 
 function navTo(id){
   document.querySelectorAll(".screen").forEach(s=>s.classList.toggle("active",s.id===id));
@@ -60,7 +61,7 @@ function navTo(id){
   const t={overview:["Hausbau","Übersicht"],expenses:["Ausgaben","Alle Vorgänge"],budget:["Budget","Gewerke"],documents:["Dokumente","PDF-Ablage"],more:["Mehr","Einstellungen & Export"]};
   document.getElementById("pageTitle").textContent=t[id][0];
   document.getElementById("pageSub").textContent=t[id][1];
-  document.getElementById("addBtn").style.display=["overview","expenses"].includes(id)?"block":"none";
+  
 }
 function totalsByFinance(){
   const out={"Eigenkapital":0,"KfW":0,"Banktranche 1":0,"Banktranche 2":0};
@@ -95,10 +96,10 @@ function render(){
   const recent=[...state.expenses].slice(-4).reverse();
   recentExpenses.innerHTML=recent.length?recent.map(summaryRow).join(""):`<div class="empty">Noch keine Ausgaben</div>`;
 
-  renderExpenseList();renderBudgets();renderDocuments();renderColorSettings();
+  renderExpenseList();renderBudgets();renderDocuments();renderColorSettings();if(window.lucide)lucide.createIcons();
 }
 function summaryRow(e){
-  const m=metaFor(e.financing);
+  const m=metaFor(e.financing,e.color);
   return `<div class="summary-row" onclick="openExpense('${e.id}')">
     <div class="summary-left"><span class="dot" style="--c:${m.accent}"></span>
       <div><div class="summary-name">${escapeHtml(e.title)}</div><div class="summary-sub">${statusOf(e)}</div></div></div>
@@ -108,7 +109,7 @@ function summaryRow(e){
 function renderExpenseList(){
   const list=state.expenses.filter(e=>(currentFilter==="Alle"||statusOf(e)===currentFilter)&&(!currentFinancing||e.financing===currentFinancing));
   expenseList.innerHTML=list.length?list.map(e=>{
-    const m=metaFor(e.financing);const st=statusOf(e);
+    const m=metaFor(e.financing,e.color);const st=statusOf(e);
     const dateText=st==="Bezahlt"?"Bezahlt am "+dateDE(e.paid):st==="Rechnung offen"?"fällig "+dateDE(e.due):st==="Beauftragt"?"Beauftragt am "+dateDE(e.ordered):"Geplant";
     return `<div class="card expense-card" onclick="openExpense('${e.id}')">
       <div class="expense-icon" style="--accent:${m.accent};--soft:${m.soft}">•</div>
@@ -125,11 +126,15 @@ function renderBudgets(){
     const spent=state.expenses.filter(e=>e.category===cat).reduce((s,e)=>s+Number(e.amount||0),0);
     const pct=budget?Math.min(100,spent/budget*100):0;
     const accent="#3277C8";
-    return `<div class="budget-row" onclick="openBudgetEditor(${JSON.stringify(cat)})" style="--accent:${accent};--pct:${pct}%">
+    return `<button type="button" class="budget-row budget-row-button" data-budget-key="${encodeURIComponent(cat)}" style="--accent:${accent};--pct:${pct}%">
       <div class="budget-head"><div><div class="budget-title">${escapeHtml(cat)}</div><div class="budget-sub">${money(spent)} von ${money(budget)}</div></div><b>${Math.round(pct)} %</b></div>
       <div class="budget-bar"><span></span></div>
-    </div>`;
+    </button>`;
   }).join("")||`<div class="empty">Noch keine Budgets erfasst</div>`;
+
+  budgetList.querySelectorAll("[data-budget-key]").forEach(row=>{
+    row.addEventListener("click",()=>openBudgetEditor(decodeURIComponent(row.dataset.budgetKey)));
+  });
 }
 function renderDocuments(){
   const items=[];
@@ -154,21 +159,43 @@ function renderColorSettings(){
 }
 function setFinanceColor(fin,key){state.colors[fin]=key;render();toast("Farbe gespeichert");}
 
+
+function renderExpenseColorPicker(){
+  const autoMeta=metaFor(fFinancing.value);
+  expenseColorNote.textContent=draftExpenseColor
+    ? `Individuell: ${palette[draftExpenseColor]?.name||""}`
+    : `Automatisch: ${palette[state.colors[fFinancing.value]]?.name||""}`;
+  expenseColorSwatches.innerHTML=`
+    <button type="button" class="expense-color-choice auto ${draftExpenseColor===null?"active":""}"
+      title="Automatisch nach Finanzierung" aria-label="Automatisch nach Finanzierung"
+      onclick="setExpenseColor(null)"></button>
+    ${Object.entries(palette).map(([key,m])=>`
+      <button type="button" class="expense-color-choice ${draftExpenseColor===key?"active":""}"
+        title="${m.name}" aria-label="${m.name}"
+        style="background:${m.soft};border-color:${m.accent}"
+        onclick="setExpenseColor('${key}')"></button>`).join("")}
+  `;
+}
+function setExpenseColor(key){
+  draftExpenseColor=key;
+  renderExpenseColorPicker();
+}
+
 function openExpense(id=null){
   editingId=id;const e=id?state.expenses.find(x=>x.id===id):null;
   modalTitle.textContent=e?"Ausgabe bearbeiten":"Neue Ausgabe";
   deleteExpense.style.display=e?"inline-block":"none";
   fCategory.value=e?.category||categories[0];fTitle.value=e?.title||"";fCompany.value=e?.company||"";
   fAmount.value=e?.amount||"";fFinancing.value=e?.financing||"Eigenkapital";fOrdered.value=e?.ordered||"";
-  fReceived.value=e?.received||"";fDue.value=e?.due||"";fPaid.value=e?.paid||"";fNote.value=e?.note||"";
-  draftDocs=structuredClone(e?.docs||[]);renderDraftDocs();expenseModal.classList.add("open");
+  fReceived.value=e?.received||"";fDue.value=e?.due||"";fPaid.value=e?.paid||"";fNote.value=e?.note||"";noteCount.textContent=fNote.value.length;
+  draftDocs=structuredClone(e?.docs||[]);draftExpenseColor=e?.color||null;renderExpenseColorPicker();renderDraftDocs();expenseModal.classList.add("open");if(window.lucide)lucide.createIcons();
 }
 function closeExpense(){expenseModal.classList.remove("open");}
 async function saveExpense(){
   const title=fTitle.value.trim();if(!title){toast("Bitte eine Bezeichnung eingeben");return;}
-  const obj={id:editingId||crypto.randomUUID(),category:fCategory.value,title,company:fCompany.value.trim(),amount:Number(fAmount.value||0),financing:fFinancing.value,ordered:fOrdered.value,received:fReceived.value,due:fDue.value,paid:fPaid.value,note:fNote.value.trim(),docs:draftDocs};
+  const obj={id:editingId||crypto.randomUUID(),category:fCategory.value,title,company:fCompany.value.trim(),amount:Number(fAmount.value||0),financing:fFinancing.value,ordered:fOrdered.value,received:fReceived.value,due:fDue.value,paid:fPaid.value,note:fNote.value.trim(),color:draftExpenseColor,docs:draftDocs};
   if(editingId){const i=state.expenses.findIndex(x=>x.id===editingId);state.expenses[i]=obj;}else state.expenses.push(obj);
-  closeExpense();render();toast("Gespeichert");
+  closeExpense();render();if(window.lucide)lucide.createIcons();toast("Gespeichert");
 }
 async function deleteExpenseItem(){
   if(!editingId)return;const e=state.expenses.find(x=>x.id===editingId);if(!e)return;
@@ -234,18 +261,22 @@ async function importBackup(file){
 
 fCategory.innerHTML=categories.map(c=>`<option>${c}</option>`).join("");
 document.querySelectorAll("[data-nav]").forEach(b=>b.addEventListener("click",()=>navTo(b.dataset.nav)));
-settingsBtn.onclick=()=>navTo("more");addBtn.onclick=()=>openExpense();cancelExpense.onclick=closeExpense;saveExpense.onclick=saveExpense;deleteExpense.onclick=deleteExpenseItem;
+settingsBtn.onclick=()=>navTo("more");
+inlineAddExpense.onclick=()=>openExpense();cancelExpense.onclick=closeExpense;saveExpense.onclick=saveExpense;deleteExpense.onclick=deleteExpenseItem;
 expenseModal.addEventListener("click",e=>{if(e.target.id==="expenseModal")closeExpense();});
 document.querySelectorAll(".chip").forEach(c=>c.onclick=()=>{document.querySelectorAll(".chip").forEach(x=>x.classList.remove("active"));c.classList.add("active");currentFilter=c.dataset.filter;currentFinancing=null;renderExpenseList();});
 openInvoicesCard.onclick=()=>showExpenses("Rechnung offen");openInvoicesCard.onkeydown=e=>{if(e.key==="Enter"||e.key===" "){e.preventDefault();showExpenses("Rechnung offen");}};
+fFinancing.addEventListener("change",()=>{if(draftExpenseColor===null)renderExpenseColorPicker();});
+fNote.addEventListener("input",()=>noteCount.textContent=fNote.value.length);
 addPdfBtn.onclick=()=>pdfInput.click();pdfInput.onchange=e=>addPdfs([...e.target.files]);
 addBudgetBtn.onclick=()=>openBudgetEditor();cancelBudget.onclick=closeBudgetEditor;saveBudget.onclick=saveBudgetItem;deleteBudget.onclick=deleteBudgetItem;
 budgetModal.addEventListener("click",e=>{if(e.target.id==="budgetModal")closeBudgetEditor();});
 editBudgetBtn.onclick=()=>{const v=prompt("Gesamtbudget in Euro",state.overallBudget);if(v!==null&&!isNaN(Number(v))){state.overallBudget=Number(v);render();}};
 exportBtn.onclick=exportBackup;importBtn.onclick=()=>importFile.click();importFile.onchange=async e=>{try{await importBackup(e.target.files[0]);}catch{toast("Import fehlgeschlagen");}};
 resetBtn.onclick=async()=>{if(confirm("Testdaten wirklich zurücksetzen?")){state=structuredClone(defaultState);await clearDocuments();render();toast("Zurückgesetzt");}};
-window.openExpense=openExpense;window.openStoredDoc=openStoredDoc;window.removeDraftDoc=removeDraftDoc;window.openBudgetEditor=openBudgetEditor;window.setFinanceColor=setFinanceColor;
+window.openExpense=openExpense;window.openStoredDoc=openStoredDoc;window.removeDraftDoc=removeDraftDoc;window.openBudgetEditor=openBudgetEditor;window.setFinanceColor=setFinanceColor;window.setExpenseColor=setExpenseColor;
 
 const draftDocsEl=document.getElementById("draftDocs");
 render();
+if(window.lucide)lucide.createIcons();
 if("serviceWorker"in navigator)window.addEventListener("load",()=>navigator.serviceWorker.register("sw.js"));

@@ -1,4 +1,4 @@
-const CACHE="hausbau-cockpit-v1-icons";
+const CACHE="hausbau-cockpit-v2-0";
 const ASSETS=["./","index.html","styles.css","app.js","storage.js","manifest.json","icon-192.png","icon-512.png","apple-touch-icon.png","favicon.png"];
 self.addEventListener("install",e=>e.waitUntil(caches.open(CACHE).then(c=>c.addAll(ASSETS))));
 self.addEventListener("activate",e=>e.waitUntil(caches.keys().then(keys=>Promise.all(keys.filter(k=>k!==CACHE).map(k=>caches.delete(k))))));

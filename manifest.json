@@ -3,8 +3,8 @@
   "short_name": "Hausbau",
   "start_url": "./",
   "display": "standalone",
-  "background_color": "#f1f2f4",
-  "theme_color": "#cc1824",
+  "background_color": "#f5f6f8",
+  "theme_color": "#0b98a5",
   "description": "Ausgaben-, Budget- und Dokumentenverwaltung für den Hausbau",
   "scope": "./",
   "icons": [
