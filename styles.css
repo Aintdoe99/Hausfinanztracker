@@ -264,3 +264,191 @@ body,.app,.sheet{background:var(--bg)}
   .date-field input{width:125px!important;font-size:14px}
   .premium-field{padding:10px 12px}
 }
+
+
+/* ===== v2.1: Ausgabenformular kompakter und ruhiger ===== */
+
+/* Header: Titel bleibt einzeilig, Aktionen bekommen genug Platz */
+.expense-sheet .premium-head{
+  grid-template-columns:minmax(84px,1fr) minmax(170px,auto) minmax(150px,1fr);
+  gap:4px;
+}
+.expense-sheet .premium-head h2{
+  white-space:nowrap;
+  font-size:20px;
+  line-height:1.15;
+}
+.expense-sheet .sheet-actions{
+  gap:4px;
+}
+.expense-sheet .sheet-actions .link-btn,
+.expense-sheet #cancelExpense{
+  font-size:14px;
+  padding:5px 4px;
+}
+
+/* Karten und Felder etwas kompakter */
+.expense-sheet .form-section{
+  margin-top:16px;
+}
+.expense-sheet .form-section h3{
+  margin:0 0 9px 2px;
+  font-size:13px;
+}
+.expense-sheet .premium-field{
+  min-height:64px;
+  grid-template-columns:38px 1fr auto;
+  gap:10px;
+  padding:9px 12px;
+  border-radius:15px;
+  margin-bottom:9px;
+}
+.expense-sheet .premium-field.compact-field{
+  min-height:58px;
+  grid-template-columns:38px 1fr auto auto;
+}
+
+/* Icons deutlich kleiner */
+.expense-sheet .field-icon{
+  width:34px;
+  height:34px;
+  border-radius:10px;
+}
+.expense-sheet .field-icon svg{
+  width:18px;
+  height:18px;
+  stroke-width:1.8;
+}
+.expense-sheet .field-tail svg{
+  width:17px;
+  height:17px;
+}
+
+/* Typografie harmonischer */
+.expense-sheet .field-label{
+  font-size:11px;
+}
+.expense-sheet .strong-label{
+  font-size:13px;
+}
+.expense-sheet .premium-field input,
+.expense-sheet .premium-field select{
+  font-size:15px;
+}
+.expense-sheet .tail-input{
+  width:105px!important;
+  font-size:15px!important;
+}
+.expense-sheet .tail-select{
+  min-width:112px;
+  font-size:15px!important;
+}
+
+/* Farbauswahl: passt garantiert in eine Zeile */
+.expense-sheet .color-premium{
+  grid-template-columns:38px 72px 1fr;
+  align-items:center;
+  min-height:58px;
+}
+.expense-sheet .compact-swatches{
+  display:flex;
+  justify-content:flex-end;
+  align-items:center;
+  flex-wrap:nowrap;
+  gap:6px;
+  min-width:0;
+}
+.expense-sheet .compact-swatches .expense-color-choice{
+  width:24px;
+  height:24px;
+  min-width:24px;
+  flex:0 0 24px;
+  border-width:2px;
+}
+.expense-sheet .compact-swatches .expense-color-choice.active{
+  outline-width:2px;
+  outline-offset:2px;
+}
+.expense-sheet .compact-swatches .expense-color-choice.auto::after{
+  font-size:10px;
+}
+
+/* Terminzeilen ebenfalls kompakter */
+.expense-sheet .date-field{
+  grid-template-columns:38px minmax(110px,1fr) auto 24px;
+  min-height:56px;
+}
+.expense-sheet .date-field input{
+  width:120px!important;
+  font-size:13px!important;
+}
+
+/* Notiz und Upload auf denselben Maßstab bringen */
+.expense-sheet .premium-note{
+  border-radius:15px;
+  padding:12px;
+}
+.expense-sheet .premium-note textarea{
+  min-height:74px;
+  font-size:14px;
+}
+.expense-sheet .upload-card{
+  grid-template-columns:38px 1fr 22px;
+  padding:12px;
+  border-radius:15px;
+}
+.expense-sheet .upload-copy strong{
+  font-size:15px;
+}
+.expense-sheet .upload-copy small{
+  font-size:11px;
+}
+
+/* Kleine Displays: weiter verdichten, ohne die Startseite anzutasten */
+@media(max-width:390px){
+  .expense-sheet .premium-head{
+    grid-template-columns:78px minmax(145px,1fr) minmax(130px,auto);
+  }
+  .expense-sheet .premium-head h2{
+    font-size:18px;
+  }
+  .expense-sheet .sheet-actions .link-btn,
+  .expense-sheet #cancelExpense{
+    font-size:13px;
+  }
+  .expense-sheet .premium-field{
+    grid-template-columns:34px 1fr auto;
+    gap:8px;
+    padding:8px 10px;
+  }
+  .expense-sheet .premium-field.compact-field{
+    grid-template-columns:34px 1fr auto auto;
+  }
+  .expense-sheet .field-icon{
+    width:31px;
+    height:31px;
+  }
+  .expense-sheet .field-icon svg{
+    width:16px;
+    height:16px;
+  }
+  .expense-sheet .color-premium{
+    grid-template-columns:34px 58px 1fr;
+  }
+  .expense-sheet .compact-swatches{
+    gap:4px;
+  }
+  .expense-sheet .compact-swatches .expense-color-choice{
+    width:21px;
+    height:21px;
+    min-width:21px;
+    flex-basis:21px;
+  }
+  .expense-sheet .date-field{
+    grid-template-columns:34px minmax(96px,1fr) auto 22px;
+  }
+  .expense-sheet .date-field input{
+    width:106px!important;
+    font-size:12px!important;
+  }
+}
