@@ -1,3 +1,11 @@
+# Hausbau-Cockpit 4.4
+
+- Symboländerungen in der zentralen Gewerkeverwaltung werden überall übernommen.
+- Farbänderungen in der zentralen Gewerkeverwaltung werden überall übernommen.
+- Bestehende individuelle Ausgabenfarben des Gewerks werden dabei auf die zentrale Farbe zurückgesetzt.
+- Live-Vorschau für Symbol und Farbe ergänzt.
+- Dateinamen bleiben unverändert.
+
 # Hausbau-Cockpit 4.3
 
 - Zentrale Gewerkeverwaltung für Ausgaben, Budget und Firmen.

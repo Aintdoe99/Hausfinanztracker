@@ -194,12 +194,21 @@ function renderCategoryList(){
   if(window.lucide)lucide.createIcons();
 }
 
+function updateCategoryPreview(){
+  const colorKey=gColor?.value||"teal";
+  const meta=palette[colorKey]||palette.teal;
+  gIconPreview.style.setProperty("--accent",meta.accent);
+  gIconPreview.style.setProperty("--soft",meta.soft);
+  gIconPreview.innerHTML=categoryIconSvg(gName.value||editingCategoryName||"",gIcon.value||"tool");
+}
+
 function clearCategoryForm(){
   editingCategoryName=null;
   categoryModalTitle.textContent="Neues Gewerk";
   gName.value="";
   gIcon.value="tool";
   gColor.value="teal";
+  updateCategoryPreview();
   deleteCategory.style.display="none";
 }
 
@@ -209,6 +218,7 @@ function editCategory(name){
   gName.value=name;
   gIcon.value=state.categoryIcons[name]||categoryIconTypes[name]||"tool";
   gColor.value=state.categoryColors[name]||"teal";
+  updateCategoryPreview();
   deleteCategory.style.display="inline-flex";
 }
 
@@ -241,14 +251,20 @@ function saveCategoryItem(){
 
   state.categoryIcons[name]=gIcon.value;
   state.categoryColors[name]=gColor.value;
-  editingCategoryName=name;
 
+  // Alte individuelle Ausgabenfarben dieses Gewerks entfernen,
+  // damit künftig immer die zentrale Gewerksfarbe gilt.
+  state.expenses.forEach(expense=>{
+    if(expense.category===name) expense.color=null;
+  });
+
+  editingCategoryName=name;
   saveState();
+
   refreshCategorySelects();
-  renderCategoryList();
-  renderCompanyList();
   render();
   editCategory(name);
+  updateCategoryPreview();
   toast("Gewerk gespeichert");
 }
 
@@ -723,6 +739,9 @@ manageCategoriesBtn.addEventListener("click",openCategoryManager);
 cancelCategory.addEventListener("click",closeCategoryManager);
 saveCategory.addEventListener("click",saveCategoryItem);
 newCategory.addEventListener("click",clearCategoryForm);
+gIcon.addEventListener("change",updateCategoryPreview);
+gColor.addEventListener("change",updateCategoryPreview);
+gName.addEventListener("input",updateCategoryPreview);
 deleteCategory.addEventListener("click",deleteCategoryItem);
 categoryModal.addEventListener("click",event=>{if(event.target.id==="categoryModal")closeCategoryManager();});
 manageCompaniesBtn.addEventListener("click",()=>openCompanyManager());

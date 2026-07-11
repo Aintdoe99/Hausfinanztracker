@@ -70,10 +70,11 @@ const categorySvgPaths={
   tool:'<path d="M14.7 6.3a4 4 0 0 0-5-5L12 3.6 8.4 7.2 6.1 4.9a4 4 0 0 0 5 5L4 17v3h3l7.7-7.7a4 4 0 0 0 5-5L17.4 9.6 14 6.2l.7.1Z"/>'
 };
 
-function categoryIconSvg(category){
-  const type=(typeof state!=="undefined"&&state?.categoryIcons?.[category])||categoryIconTypes[category]||"tool";
+function categoryIconSvg(category,overrideType=null){
+  const dynamicType=(typeof state!=="undefined"&&state?.categoryIcons?.[category])||null;
+  const type=overrideType||dynamicType||categoryIconTypes[category]||"tool";
   const paths=categorySvgPaths[type]||categorySvgPaths.tool;
-  return `<svg viewBox="0 0 24 24" aria-hidden="true" focusable="false" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round">${paths}</svg>`;
+  return `<svg viewBox="0 0 24 24" aria-hidden="true" focusable="false" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round">${paths}</svg>`;
 }
 
 const financeIconTypes={

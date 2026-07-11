@@ -340,9 +340,11 @@
         <label>Bezeichnung *</label>
         <input id="gName" placeholder="z. B. Elektro / KNX" />
       </div>
-      <div class="field">
+      <div class="field category-symbol-field">
         <label>Symbol</label>
-        <select id="gIcon">
+        <div class="category-symbol-control">
+          <span id="gIconPreview" class="category-symbol-preview" aria-hidden="true"></span>
+          <select id="gIcon">
           <option value="tool">Werkzeug</option>
           <option value="bolt">Blitz</option>
           <option value="house">Haus</option>
@@ -367,7 +369,8 @@
           <option value="shield">Versicherung</option>
           <option value="map">Grundstück</option>
           <option value="clipboard">Planung</option>
-        </select>
+          </select>
+        </div>
       </div>
       <div class="field">
         <label>Farbe</label>

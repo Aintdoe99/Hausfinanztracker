@@ -1139,3 +1139,34 @@ body,.app,.sheet{background:var(--bg)}
   color:var(--ink);
   opacity:1;
 }
+
+
+/* ===== v4.4: zuverlässige Gewerke-Symbol- und Farbauswahl ===== */
+.category-symbol-control{
+  display:flex;
+  align-items:center;
+  gap:12px;
+}
+
+.category-symbol-control select{
+  flex:1;
+  min-width:0;
+}
+
+.category-symbol-preview{
+  width:42px;
+  height:42px;
+  min-width:42px;
+  border-radius:13px;
+  display:grid;
+  place-items:center;
+  color:var(--accent,#159FA8);
+  background:var(--soft,#DDF4F3);
+}
+
+.category-symbol-preview svg{
+  width:22px;
+  height:22px;
+  stroke:currentColor;
+  stroke-width:1.9;
+}
