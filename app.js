@@ -161,20 +161,24 @@ function setFinanceColor(fin,key){state.colors[fin]=key;render();toast("Farbe ge
 
 
 function renderExpenseColorPicker(){
-  const autoMeta=metaFor(fFinancing.value);
+  const manualColors=["purple","yellow","blue","rose","teal"];
   expenseColorNote.textContent=draftExpenseColor
     ? `Individuell: ${palette[draftExpenseColor]?.name||""}`
     : `Automatisch: ${palette[state.colors[fFinancing.value]]?.name||""}`;
   expenseColorSwatches.innerHTML=`
-    <button type="button" class="expense-color-choice auto ${draftExpenseColor===null?"active":""}"
-      title="Automatisch nach Finanzierung" aria-label="Automatisch nach Finanzierung"
-      style="background:#f4f5f7;border-color:#9aa1ab"
+    <button type="button"
+      class="expense-color-choice auto ${draftExpenseColor===null?"active":""}"
+      title="Automatisch nach Finanzierung"
+      aria-label="Automatisch nach Finanzierung"
       onclick="setExpenseColor(null)"></button>
-    ${Object.entries(palette).filter(([key])=>key!=="green").map(([key,m])=>`
-      <button type="button" class="expense-color-choice ${draftExpenseColor===key?"active":""}"
+    ${manualColors.map(key=>{
+      const m=palette[key];
+      return `<button type="button"
+        class="expense-color-choice ${draftExpenseColor===key?"active":""}"
         title="${m.name}" aria-label="${m.name}"
         style="background:${m.soft};border-color:${m.accent}"
-        onclick="setExpenseColor('${key}')"></button>`).join("")}
+        onclick="setExpenseColor('${key}')"></button>`;
+    }).join("")}
   `;
 }
 function setExpenseColor(key){
