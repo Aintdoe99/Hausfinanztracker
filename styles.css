@@ -452,3 +452,97 @@ body,.app,.sheet{background:var(--bg)}
     font-size:12px!important;
   }
 }
+
+
+/* ===== v2.2: Farbzeile für Galaxy S26 Ultra korrigiert ===== */
+
+/* Nur das Ausgabenformular anfassen */
+.expense-sheet .color-premium{
+  display:grid;
+  grid-template-columns:30px auto minmax(0,1fr);
+  align-items:center;
+  column-gap:8px;
+  min-height:54px;
+  padding:8px 10px;
+}
+
+/* Symbol noch kleiner */
+.expense-sheet .color-premium .field-icon{
+  width:28px;
+  height:28px;
+  border-radius:9px;
+}
+.expense-sheet .color-premium .field-icon svg{
+  width:15px;
+  height:15px;
+  stroke-width:1.7;
+}
+
+/* Label ohne feste Breite */
+.expense-sheet .color-premium .field-stack{
+  width:auto;
+  min-width:0;
+}
+.expense-sheet .color-premium .field-label{
+  white-space:nowrap;
+  font-size:13px;
+}
+
+/* Farbpunkte nutzen den restlichen Platz */
+.expense-sheet .compact-swatches{
+  display:grid;
+  grid-template-columns:repeat(7,minmax(18px,1fr));
+  align-items:center;
+  justify-items:center;
+  gap:3px;
+  width:100%;
+  min-width:0;
+}
+
+/* Punkte kleiner */
+.expense-sheet .compact-swatches .expense-color-choice{
+  width:20px;
+  height:20px;
+  min-width:20px;
+  flex:0 0 20px;
+  border-width:1.8px;
+  box-shadow:none;
+}
+
+/* Aktiver Punkt dezenter */
+.expense-sheet .compact-swatches .expense-color-choice.active{
+  outline:2px solid #111827;
+  outline-offset:2px;
+}
+
+/* Auto-Auswahl: nur ein Kreis mit A, kein zusätzlicher grüner Eindruck */
+.expense-sheet .compact-swatches .expense-color-choice.auto{
+  background:#f4f5f7;
+  border-color:#9aa1ab;
+}
+.expense-sheet .compact-swatches .expense-color-choice.auto::after{
+  content:"A";
+  font-size:9px;
+  font-weight:800;
+  color:#444b55;
+}
+
+/* Kleine Displays noch etwas enger */
+@media(max-width:430px){
+  .expense-sheet .color-premium{
+    grid-template-columns:28px auto minmax(0,1fr);
+    column-gap:7px;
+    padding-left:9px;
+    padding-right:9px;
+  }
+  .expense-sheet .compact-swatches{
+    grid-template-columns:repeat(7,minmax(17px,1fr));
+    gap:2px;
+  }
+  .expense-sheet .compact-swatches .expense-color-choice{
+    width:19px;
+    height:19px;
+    min-width:19px;
+    flex-basis:19px;
+  }
+}
