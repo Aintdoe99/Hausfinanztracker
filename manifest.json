@@ -1,0 +1,25 @@
+{
+  "name": "Hausbau-Cockpit",
+  "short_name": "Hausbau",
+  "start_url": "./?v=40",
+  "display": "standalone",
+  "background_color": "#f5f6f8",
+  "theme_color": "#0b98a5",
+  "description": "Ausgaben-, Budget- und Dokumentenverwaltung für den Hausbau",
+  "scope": "./",
+  "icons": [
+    {
+      "src": "icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ],
+  "id": "./?hausbau-cockpit-v40"
+}
