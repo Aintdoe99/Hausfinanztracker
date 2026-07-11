@@ -267,10 +267,10 @@ async function importBackup(file){
 fCategory.innerHTML=categories.map(c=>`<option>${c}</option>`).join("");
 document.querySelectorAll("[data-nav]").forEach(b=>b.addEventListener("click",()=>navTo(b.dataset.nav)));
 settingsBtn.onclick=()=>navTo("more");
-inlineAddExpense.onclick=()=>openExpense();
-document.getElementById("cancelExpense").onclick=closeExpense;
-document.getElementById("saveExpense").onclick=saveExpenseRecord;
-document.getElementById("deleteExpense").onclick=deleteExpenseItem;
+document.getElementById("inlineAddExpense").addEventListener("click",()=>openExpense());
+document.getElementById("cancelExpense").addEventListener("click",closeExpense);
+document.getElementById("saveExpense").addEventListener("click",saveExpenseRecord);
+document.getElementById("deleteExpense").addEventListener("click",deleteExpenseItem);
 expenseModal.addEventListener("click",e=>{if(e.target.id==="expenseModal")closeExpense();});
 document.querySelectorAll(".chip").forEach(c=>c.onclick=()=>{document.querySelectorAll(".chip").forEach(x=>x.classList.remove("active"));c.classList.add("active");currentFilter=c.dataset.filter;currentFinancing=null;renderExpenseList();});
 openInvoicesCard.onclick=()=>showExpenses("Rechnung offen");openInvoicesCard.onkeydown=e=>{if(e.key==="Enter"||e.key===" "){e.preventDefault();showExpenses("Rechnung offen");}};
