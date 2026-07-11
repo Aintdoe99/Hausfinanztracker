@@ -546,3 +546,84 @@ body,.app,.sheet{background:var(--bg)}
     flex-basis:19px;
   }
 }
+
+
+/* ===== v2.3: echte Korrektur der Farbzeile und kleineren Formular-Icons ===== */
+.expense-sheet .color-premium{
+  grid-template-columns:26px max-content minmax(0,1fr)!important;
+  column-gap:7px!important;
+  min-height:52px!important;
+  padding:8px 10px!important;
+}
+.expense-sheet .color-premium .field-icon{
+  width:26px!important;
+  height:26px!important;
+  min-width:26px!important;
+  border-radius:8px!important;
+}
+.expense-sheet .color-premium .field-icon svg{
+  width:14px!important;
+  height:14px!important;
+  max-width:14px!important;
+  max-height:14px!important;
+}
+.expense-sheet .compact-swatches{
+  display:grid!important;
+  grid-template-columns:repeat(6,minmax(18px,1fr))!important;
+  width:100%!important;
+  gap:4px!important;
+  justify-items:center!important;
+}
+.expense-sheet .compact-swatches .expense-color-choice{
+  width:19px!important;
+  height:19px!important;
+  min-width:19px!important;
+  min-height:19px!important;
+  padding:0!important;
+  margin:0!important;
+  box-shadow:none!important;
+}
+.expense-sheet .compact-swatches .expense-color-choice.auto{
+  background:#f4f5f7!important;
+  border-color:#9aa1ab!important;
+}
+.expense-sheet .compact-swatches .expense-color-choice.auto::after{
+  font-size:8px!important;
+  color:#444b55!important;
+}
+.expense-sheet .compact-swatches .expense-color-choice.active{
+  outline:2px solid #111827!important;
+  outline-offset:2px!important;
+}
+/* Alle Formularsymbole etwas kleiner, unabhängig von Lucide-Inline-Maßen */
+.expense-sheet .premium-field>.field-icon,
+.expense-sheet .upload-card>.field-icon{
+  width:30px!important;
+  height:30px!important;
+  min-width:30px!important;
+  border-radius:9px!important;
+}
+.expense-sheet .premium-field>.field-icon svg,
+.expense-sheet .upload-card>.field-icon svg{
+  width:16px!important;
+  height:16px!important;
+  max-width:16px!important;
+  max-height:16px!important;
+  stroke-width:1.8!important;
+}
+/* Farbzeile behält die noch kleineren Werte */
+.expense-sheet .color-premium>.field-icon{
+  width:26px!important;
+  height:26px!important;
+  min-width:26px!important;
+}
+.expense-sheet .color-premium>.field-icon svg{
+  width:14px!important;
+  height:14px!important;
+}
+@media(max-width:430px){
+  .expense-sheet .compact-swatches{gap:3px!important;}
+  .expense-sheet .compact-swatches .expense-color-choice{
+    width:18px!important;height:18px!important;min-width:18px!important;min-height:18px!important;
+  }
+}

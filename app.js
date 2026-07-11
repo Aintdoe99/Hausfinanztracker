@@ -168,8 +168,9 @@ function renderExpenseColorPicker(){
   expenseColorSwatches.innerHTML=`
     <button type="button" class="expense-color-choice auto ${draftExpenseColor===null?"active":""}"
       title="Automatisch nach Finanzierung" aria-label="Automatisch nach Finanzierung"
+      style="background:#f4f5f7;border-color:#9aa1ab"
       onclick="setExpenseColor(null)"></button>
-    ${Object.entries(palette).map(([key,m])=>`
+    ${Object.entries(palette).filter(([key])=>key!=="green").map(([key,m])=>`
       <button type="button" class="expense-color-choice ${draftExpenseColor===key?"active":""}"
         title="${m.name}" aria-label="${m.name}"
         style="background:${m.soft};border-color:${m.accent}"
