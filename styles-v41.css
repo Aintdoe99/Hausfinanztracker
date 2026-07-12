@@ -1278,3 +1278,103 @@ body,.app,.sheet{background:var(--bg)}
     font-size:16px;
   }
 }
+
+
+/* ===== v4.8: Finanzierungsbudgets ===== */
+.finance-card-button{
+  width:100%;
+  border:0;
+  text-align:left;
+  font:inherit;
+  cursor:pointer;
+}
+
+.finance-available{
+  margin-top:4px;
+  font-size:12px;
+  font-weight:700;
+  color:var(--muted);
+  min-height:15px;
+}
+
+.finance-available.negative{
+  color:#c94f55;
+}
+
+.finance-progress{
+  height:5px;
+  margin-top:10px;
+  border-radius:999px;
+  overflow:hidden;
+  background:rgba(15,23,42,.08);
+}
+
+.finance-progress span{
+  display:block;
+  width:var(--pct,0%);
+  height:100%;
+  border-radius:inherit;
+  background:var(--accent);
+}
+
+.finance-budget-source-card{
+  display:flex;
+  align-items:center;
+  gap:14px;
+  margin:8px 0 14px;
+  padding:16px;
+  border-radius:20px;
+  background:var(--soft);
+  color:var(--accent);
+}
+
+.finance-budget-source-icon{
+  width:46px;
+  height:46px;
+  border-radius:15px;
+  display:grid;
+  place-items:center;
+  background:#fff;
+}
+
+.finance-budget-source-icon svg{
+  width:24px;
+  height:24px;
+  stroke:currentColor;
+}
+
+.finance-budget-source-name{
+  color:var(--ink);
+  font-size:18px;
+  font-weight:800;
+}
+
+.finance-budget-summary{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:12px;
+  margin-top:14px;
+}
+
+.finance-budget-summary > div{
+  padding:14px 16px;
+  border-radius:18px;
+  background:#f7f9fb;
+  display:grid;
+  gap:5px;
+}
+
+.finance-budget-summary span{
+  font-size:13px;
+  font-weight:700;
+  color:var(--muted);
+}
+
+.finance-budget-summary strong{
+  font-size:17px;
+  color:var(--ink);
+}
+
+.finance-budget-summary strong.negative{
+  color:#c94f55;
+}

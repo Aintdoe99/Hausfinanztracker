@@ -283,6 +283,43 @@
   </div>
 </div>
 
+<div class="modal" id="financeBudgetModal">
+  <div class="sheet finance-budget-sheet">
+    <div class="sheet-grabber"></div>
+    <div class="sheet-head">
+      <button class="link-btn" id="cancelFinanceBudget">Abbrechen</button>
+      <h2 id="financeBudgetModalTitle">Finanzierung</h2>
+      <button class="link-btn" id="saveFinanceBudget">Speichern</button>
+    </div>
+
+    <div class="finance-budget-source-card" id="financeBudgetSourceCard">
+      <div class="finance-budget-source-icon" id="financeBudgetSourceIcon"></div>
+      <div>
+        <div class="finance-budget-source-name" id="financeBudgetSourceName"></div>
+        <div class="summary-sub">Finanzierungsquelle</div>
+      </div>
+    </div>
+
+    <div class="card form-card">
+      <div class="field">
+        <label>Gesamtbetrag</label>
+        <input id="financeBudgetAmount" type="number" min="0" step="0.01" placeholder="0,00" />
+      </div>
+    </div>
+
+    <div class="finance-budget-summary">
+      <div>
+        <span>Verbraucht</span>
+        <strong id="financeBudgetUsed">0,00 €</strong>
+      </div>
+      <div>
+        <span>Verfügbar</span>
+        <strong id="financeBudgetAvailable">0,00 €</strong>
+      </div>
+    </div>
+  </div>
+</div>
+
 <div class="modal" id="budgetModal">
   <div class="sheet">
     <div class="sheet-head">

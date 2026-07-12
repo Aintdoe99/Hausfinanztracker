@@ -1,3 +1,11 @@
+# Hausbau-Cockpit 4.8
+
+- Jede Finanzierungskachel öffnet nur die angeklickte Finanzierungsquelle.
+- Für Eigenkapital, KfW und beide Banktranchen kann jeweils ein eigener Gesamtbetrag festgelegt und bearbeitet werden.
+- Verbraucht wird automatisch aus bezahlten Ausgaben berechnet.
+- Verfügbar und Fortschritt werden automatisch angezeigt.
+- Dateinamen bleiben bei v41 für einfaches Ersetzen im Repository.
+
 # Hausbau-Cockpit 4.7
 
 - Budgetsummen-Kachel um „Verbraucht“ und „Verfügbar“ ergänzt.

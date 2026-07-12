@@ -6,6 +6,12 @@ const defaultState={
     "Banktranche 1":"yellow",
     "Banktranche 2":"blue"
   },
+  financeBudgets:{
+    "Eigenkapital":0,
+    "KfW":0,
+    "Banktranche 1":0,
+    "Banktranche 2":0
+  },
   categoryColors:{
     "Grundstück & Nebenkosten":"teal",
     "Planung & Genehmigungen":"purple",
@@ -59,6 +65,7 @@ let draftExpenseColor=null;
 let editingCompanyId=null;
 let companyReturnToExpense=false;
 let editingCategoryName=null;
+let editingFinanceSource=null;
 
 
 function normalizeCompanyName(value=""){
@@ -107,6 +114,7 @@ function loadState(){
     const raw=localStorage.getItem("hausbauCockpitState");
     const parsed=raw?JSON.parse(raw):structuredClone(defaultState);
     parsed.colors={...defaultState.colors,...(parsed.colors||{})};
+    parsed.financeBudgets={...defaultState.financeBudgets,...(parsed.financeBudgets||{})};
     parsed.categoryColors={...defaultState.categoryColors,...(parsed.categoryColors||{})};
     parsed.categories=Array.isArray(parsed.categories)&&parsed.categories.length?parsed.categories:[...defaultState.categories];
     parsed.categoryIcons={...defaultState.categoryIcons,...(parsed.categoryIcons||{})};
@@ -302,6 +310,54 @@ function navTo(id){
   document.getElementById("pageSub").textContent=t[id][1];
   
 }
+function openFinanceBudgetEditor(source){
+  editingFinanceSource=source;
+  const used=totalsByFinance()[source]||0;
+  const budget=Number(state.financeBudgets[source]||0);
+  const available=budget-used;
+  const meta=metaFor(source);
+
+  financeBudgetModalTitle.textContent=source;
+  financeBudgetSourceName.textContent=source;
+  financeBudgetSourceIcon.innerHTML=financeIconSvg(source);
+  financeBudgetSourceCard.style.setProperty("--accent",meta.accent);
+  financeBudgetSourceCard.style.setProperty("--soft",meta.soft);
+  financeBudgetAmount.value=budget||"";
+  financeBudgetUsed.textContent=money(used);
+  financeBudgetAvailable.textContent=money(available);
+  financeBudgetAvailable.classList.toggle("negative",available<0);
+  financeBudgetModal.classList.add("open");
+}
+
+function closeFinanceBudgetEditor(){
+  financeBudgetModal.classList.remove("open");
+  editingFinanceSource=null;
+}
+
+function refreshFinanceBudgetPreview(){
+  if(!editingFinanceSource)return;
+  const used=totalsByFinance()[editingFinanceSource]||0;
+  const budget=Number(financeBudgetAmount.value||0);
+  const available=budget-used;
+  financeBudgetUsed.textContent=money(used);
+  financeBudgetAvailable.textContent=money(available);
+  financeBudgetAvailable.classList.toggle("negative",available<0);
+}
+
+function saveFinanceBudgetItem(){
+  if(!editingFinanceSource)return;
+  const amount=Number(financeBudgetAmount.value||0);
+  if(!Number.isFinite(amount)||amount<0){
+    toast("Bitte einen gültigen Gesamtbetrag eingeben");
+    return;
+  }
+  state.financeBudgets[editingFinanceSource]=amount;
+  saveState();
+  closeFinanceBudgetEditor();
+  render();
+  toast("Finanzierungsbudget gespeichert");
+}
+
 function totalsByFinance(){
   const out={"Eigenkapital":0,"KfW":0,"Banktranche 1":0,"Banktranche 2":0};
   state.expenses
@@ -324,12 +380,19 @@ function render(){
   const by=totalsByFinance();
   financeGrid.innerHTML=Object.keys(by).map(k=>{
     const m=metaFor(k);
-    return `<div class="finance-card" data-financing="${k}" style="--accent:${m.accent};--soft:${m.soft}">
+    const budget=Number(state.financeBudgets[k]||0);
+    const used=Number(by[k]||0);
+    const available=budget-used;
+    const pct=budget?Math.min(100,Math.max(0,used/budget*100)):0;
+    return `<button type="button" class="finance-card finance-card-button" data-financing="${k}" style="--accent:${m.accent};--soft:${m.soft};--pct:${pct}%">
       <div class="finance-top"><div class="bubble">${financeIconSvg(k)}</div><div class="finance-label">${k}</div></div>
-      <div class="finance-value">${money(by[k])}</div><div class="finance-caption">verbraucht</div>
-    </div>`;
+      <div class="finance-value">${money(used)}</div>
+      <div class="finance-caption">${budget?`von ${money(budget)}`:"Gesamtbetrag festlegen"}</div>
+      <div class="finance-available ${available<0?"negative":""}">${budget?`${money(available)} verfügbar`:""}</div>
+      <div class="finance-progress"><span></span></div>
+    </button>`;
   }).join("");
-  document.querySelectorAll(".finance-card").forEach(c=>c.onclick=()=>showExpenses("Alle",c.dataset.financing));
+  document.querySelectorAll(".finance-card").forEach(c=>c.onclick=()=>openFinanceBudgetEditor(c.dataset.financing));
 
   const open=state.expenses.filter(e=>statusOf(e)==="Rechnung offen").reduce((s,e)=>s+Number(e.amount||0),0);
   openAmount.textContent=money(open);
@@ -769,6 +832,10 @@ fNote.addEventListener("input",()=>noteCount.textContent=fNote.value.length);
 addPdfBtn.onclick=()=>pdfInput.click();pdfInput.onchange=e=>addPdfs([...e.target.files]);
 addBudgetBtn.onclick=()=>openBudgetEditor();cancelBudget.onclick=closeBudgetEditor;saveBudget.onclick=saveBudgetItem;deleteBudget.onclick=deleteBudgetItem;
 budgetModal.addEventListener("click",e=>{if(e.target.id==="budgetModal")closeBudgetEditor();});
+cancelFinanceBudget.addEventListener("click",closeFinanceBudgetEditor);
+saveFinanceBudget.addEventListener("click",saveFinanceBudgetItem);
+financeBudgetAmount.addEventListener("input",refreshFinanceBudgetPreview);
+financeBudgetModal.addEventListener("click",event=>{if(event.target.id==="financeBudgetModal")closeFinanceBudgetEditor();});
 editBudgetBtn.onclick=()=>{const v=prompt("Gesamtbudget in Euro",state.overallBudget);if(v!==null&&!isNaN(Number(v))){state.overallBudget=Number(v);render();}};
 exportBtn.onclick=exportBackup;importBtn.onclick=()=>importFile.click();importFile.onchange=async e=>{try{await importBackup(e.target.files[0]);}catch{toast("Import fehlgeschlagen");}};
 resetBtn.onclick=async()=>{if(confirm("Testdaten wirklich zurücksetzen?")){state=structuredClone(defaultState);await clearDocuments();render();toast("Zurückgesetzt");}};
