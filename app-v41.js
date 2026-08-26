@@ -13,6 +13,7 @@ const defaultState={
     "Banktranche 2":0
   },
   financeSources:["Eigenkapital","KfW","Banktranche 1","Banktranche 2"],
+  financeIcons:{...financeIconTypes},
   categoryColors:{
     "Grundstück & Nebenkosten":"teal",
     "Planung & Genehmigungen":"purple",
@@ -118,6 +119,7 @@ function loadState(){
     parsed.colors={...defaultState.colors,...(parsed.colors||{})};
     parsed.financeBudgets={...defaultState.financeBudgets,...(parsed.financeBudgets||{})};
     parsed.financeSources=Array.isArray(parsed.financeSources)&&parsed.financeSources.length?parsed.financeSources:[...defaultState.financeSources];
+    parsed.financeIcons={...defaultState.financeIcons,...(parsed.financeIcons||{})};
     parsed.categoryColors={...defaultState.categoryColors,...(parsed.categoryColors||{})};
     parsed.categories=Array.isArray(parsed.categories)&&parsed.categories.length?parsed.categories:[...defaultState.categories];
     parsed.categoryIcons={...defaultState.categoryIcons,...(parsed.categoryIcons||{})};
@@ -205,6 +207,10 @@ function syncFinanceRename(oldName,newName){
   }
   if(Object.prototype.hasOwnProperty.call(state.financeBudgets,oldName)){
     delete state.financeBudgets[oldName];
+  }
+  if(Object.prototype.hasOwnProperty.call(state.financeIcons,oldName)){
+    state.financeIcons[newName]=state.financeIcons[oldName];
+    delete state.financeIcons[oldName];
   }
 }
 
@@ -350,6 +356,7 @@ function openFinanceBudgetEditor(source){
   financeBudgetSourceCard.style.setProperty("--accent",meta.accent);
   financeBudgetSourceCard.style.setProperty("--soft",meta.soft);
   financeBudgetName.value=source;
+  financeBudgetIcon.value=state.financeIcons[source]||financeIconTypes[source]||"banknote";
   financeBudgetAmount.value=budget||"";
   financeBudgetUsed.textContent=money(used);
   financeBudgetAvailable.textContent=money(available);
@@ -388,6 +395,7 @@ function saveFinanceBudgetItem(){
 
   if(newName!==editingFinanceSource)syncFinanceRename(editingFinanceSource,newName);
   state.financeBudgets[newName]=amount;
+  state.financeIcons[newName]=financeBudgetIcon.value;
 
   saveState();
   closeFinanceBudgetEditor();
@@ -824,6 +832,7 @@ async function importBackup(file){
   state.categories=Array.isArray(state.categories)&&state.categories.length?state.categories:[...defaultState.categories];
   state.categoryIcons={...defaultState.categoryIcons,...(state.categoryIcons||{})};
   state.financeSources=Array.isArray(state.financeSources)&&state.financeSources.length?state.financeSources:[...defaultState.financeSources];
+  state.financeIcons={...defaultState.financeIcons,...(state.financeIcons||{})};
   state.companies=(state.companies||[]).map(company=>({
     ...company,
     contactPerson:company.contactPerson||company.contact||"",
@@ -893,6 +902,9 @@ saveFinanceBudget.addEventListener("click",saveFinanceBudgetItem);
 financeBudgetAmount.addEventListener("input",refreshFinanceBudgetPreview);
 financeBudgetName.addEventListener("input",()=>{
   financeBudgetSourceName.textContent=financeBudgetName.value.trim()||editingFinanceSource||"";
+});
+financeBudgetIcon.addEventListener("change",()=>{
+  financeBudgetSourceIcon.innerHTML=financeIconSvg(editingFinanceSource,financeBudgetIcon.value);
 });
 financeBudgetModal.addEventListener("click",event=>{if(event.target.id==="financeBudgetModal")closeFinanceBudgetEditor();});
 editBudgetBtn.onclick=()=>{const v=prompt("Gesamtbudget in Euro",state.overallBudget);if(v!==null&&!isNaN(Number(v))){state.overallBudget=Number(v);render();}};

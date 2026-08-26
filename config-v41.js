@@ -87,11 +87,14 @@ const financeIconTypes={
 const financeSvgPaths={
   piggy:'<path d="M5 10.2C6.4 7.8 9.2 6.5 12.5 6.5h2.6l1.8-1.5.7 2.5c1.5.7 2.6 2.2 2.8 4h1.6v2.8h-2c-.5 1.3-1.5 2.4-2.8 3.1V20h-2.7v-2H9.3v2H6.6v-2.8C5 16.3 4 14.8 4 13.1c0-1.1.3-2.1 1-2.9Z"/><path d="M9.5 6.5V5.2h5V6.5M9.8 9h4.8"/><circle cx="17.5" cy="10.4" r=".7" fill="currentColor" stroke="none"/><path d="M4.2 11.2c-1.7 0-2.6-1-2.2-2.2"/>',
   landmark:'<path d="M3 10 12 4l9 6"/><path d="M5 10h14M6 10v8M10 10v8M14 10v8M18 10v8M4 18h16M3 21h18"/>',
-  banknote:'<rect x="3" y="6" width="18" height="12" rx="2"/><circle cx="12" cy="12" r="2.4"/><path d="M6.5 9.5h.01M17.5 14.5h.01"/>'
+  banknote:'<rect x="3" y="6" width="18" height="12" rx="2"/><circle cx="12" cy="12" r="2.4"/><path d="M6.5 9.5h.01M17.5 14.5h.01"/>',
+  coins:'<ellipse cx="12" cy="6.5" rx="7" ry="2.8"/><path d="M5 6.5v4.6c0 1.6 3.1 2.8 7 2.8s7-1.2 7-2.8V6.5"/><path d="M5 11.1v4.6c0 1.6 3.1 2.8 7 2.8s7-1.2 7-2.8v-4.6"/>',
+  house:'<path d="m3 11 9-8 9 8"/><path d="M5 10v10h14V10M9 20v-6h6v6"/>'
 };
 
-function financeIconSvg(fin){
-  const type=financeIconTypes[fin]||"banknote";
+function financeIconSvg(fin,overrideType=null){
+  const dynamicType=(typeof state!=="undefined"&&state?.financeIcons?.[fin])||null;
+  const type=overrideType||dynamicType||financeIconTypes[fin]||"banknote";
   const paths=financeSvgPaths[type]||financeSvgPaths.banknote;
   return `<svg viewBox="0 0 24 24" aria-hidden="true" focusable="false" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round">${paths}</svg>`;
 }

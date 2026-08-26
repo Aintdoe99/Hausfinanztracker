@@ -1,3 +1,13 @@
+# Hausbau-Cockpit 5.0
+
+- Finanzierungsquellen haben jetzt ein frei wählbares Symbol (Sparschwein, Bank, Geldschein, Münzen, Haus) mit Live-Vorschau. Beim Umbenennen bleibt das Symbol erhalten, statt auf den Geldschein zurückzuspringen.
+- Neuer Filter „Geplant" für Ausgaben ohne Termine — bisher waren diese nur unter „Alle" zu finden.
+- Die Filterleiste scrollt nicht mehr seitlich, sondern steht als festes Raster über zwei Zeilen. Der aktive Filter kann dadurch nicht mehr abgeschnitten werden.
+- Die vier Status-Chips sind exakt gleich breit (2×2-Raster), „Alle" steht als Zurücksetzen über die volle Breite darüber. Alles schließt bündig mit den Kacheln darunter ab.
+- Filter-Chips etwas kompakter (kleinere Schrift) und mit leichtem Tipp-Feedback.
+- Reihenfolge der Filter folgt jetzt dem Ablauf: Alle · Geplant · Beauftragt · Rechnung offen · Bezahlt.
+- Dateinamen bleiben bei v41 für einfaches Ersetzen im Repository.
+
 # Hausbau-Cockpit 4.9
 
 - Im Finanzierungs-Bearbeiten-Fenster ist „Verbraucht" jetzt antippbar und springt direkt zu den bezahlten Ausgaben dieser Finanzierungsquelle.

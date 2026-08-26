@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
-  <meta name="app-version" content="4.1">
+  <meta name="app-version" content="5.0">
 <meta name="theme-color" content="#0b98a5" />
   <link rel="manifest" href="manifest.json" />
   <link rel="icon" type="image/png" href="favicon.png" />
@@ -70,6 +70,7 @@
       </div>
       <div class="chips" id="statusChips">
         <button class="chip active" data-filter="Alle">Alle</button>
+        <button class="chip" data-filter="Geplant">Geplant</button>
         <button class="chip" data-filter="Beauftragt">Beauftragt</button>
         <button class="chip" data-filter="Rechnung offen">Rechnung offen</button>
         <button class="chip" data-filter="Bezahlt">Bezahlt</button>
@@ -306,6 +307,16 @@
       <div class="field">
         <label>Bezeichnung</label>
         <input id="financeBudgetName" placeholder="z. B. ING Bank" />
+      </div>
+      <div class="field">
+        <label>Symbol</label>
+        <select id="financeBudgetIcon">
+          <option value="piggy">Sparschwein</option>
+          <option value="landmark">Bank / Institut</option>
+          <option value="banknote">Geldschein</option>
+          <option value="coins">Münzen</option>
+          <option value="house">Haus</option>
+        </select>
       </div>
       <div class="field">
         <label>Gesamtbetrag</label>
