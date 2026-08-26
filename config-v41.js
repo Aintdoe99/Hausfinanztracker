@@ -39,13 +39,15 @@ const categoryIconTypes={
   "Außenanlagen":"tree",
   "Baunebenkosten":"receipt",
   "Versicherungen":"shield",
-  "Sonstiges":"tool"
+  "Sonstiges":"tool",
+  "Architektur":"zirkel"
 };
 
 const categorySvgPaths={
   map:'<path d="M9 18 3.5 20.5V6L9 3.5l6 2.5 5.5-2.5V18L15 20.5 9 18Z"/><path d="M9 3.5V18M15 6v14.5"/>',
   clipboard:'<rect x="5" y="4" width="14" height="17" rx="2"/><path d="M9 4V2h6v2M8 10h8M8 14h6"/>',
-  ruler:'<rect x="3" y="7" width="18" height="10" rx="2"/><path d="M7 7v4M10 7v2.5M13 7v4M16 7v2.5M19 7v4"/>',
+  ruler:'<rect x="2" y="7" width="20" height="10"/><path d="M5.33 7v3.6M8.67 7v3.6M12 7v3.6M15.33 7v3.6M18.67 7v3.6"/>',
+  zirkel:'<circle cx="12" cy="4.6" r="1.6"/><path d="M11.1 6.1 6.4 19.6M12.9 6.1l4.7 13.5"/><path d="M9 14.2h6"/>',
   flask:'<path d="M9 3h6M10 3v6l-5 9a2 2 0 0 0 2 3h10a2 2 0 0 0 2-3l-5-9V3"/><path d="M8 15h8"/>',
   construction:'<path d="M4 18h16M6 18l2-8h8l2 8M9 10V6h6v4M10 14h4"/>',
   square:'<rect x="4" y="4" width="16" height="16" rx="2"/><path d="M8 8h8v8H8z"/>',
@@ -87,7 +89,7 @@ const financeIconTypes={
 const financeSvgPaths={
   piggy:'<path d="M5 10.2C6.4 7.8 9.2 6.5 12.5 6.5h2.6l1.8-1.5.7 2.5c1.5.7 2.6 2.2 2.8 4h1.6v2.8h-2c-.5 1.3-1.5 2.4-2.8 3.1V20h-2.7v-2H9.3v2H6.6v-2.8C5 16.3 4 14.8 4 13.1c0-1.1.3-2.1 1-2.9Z"/><path d="M9.5 6.5V5.2h5V6.5M9.8 9h4.8"/><circle cx="17.5" cy="10.4" r=".7" fill="currentColor" stroke="none"/><path d="M4.2 11.2c-1.7 0-2.6-1-2.2-2.2"/>',
   landmark:'<path d="M3 10 12 4l9 6"/><path d="M5 10h14M6 10v8M10 10v8M14 10v8M18 10v8M4 18h16M3 21h18"/>',
-  banknote:'<rect x="3" y="6" width="18" height="12" rx="2"/><circle cx="12" cy="12" r="2.4"/><path d="M6.5 9.5h.01M17.5 14.5h.01"/>',
+  banknote:'<rect x="2" y="7" width="20" height="10"/><path d="M4.6 9.4h2M17.4 14.6h2"/><text x="12" y="15.3" text-anchor="middle" font-size="8.4" font-weight="700" font-family="Inter,Segoe UI,system-ui,sans-serif" fill="currentColor" stroke="none">&#8364;</text>',
   coins:'<ellipse cx="12" cy="6.5" rx="7" ry="2.8"/><path d="M5 6.5v4.6c0 1.6 3.1 2.8 7 2.8s7-1.2 7-2.8V6.5"/><path d="M5 11.1v4.6c0 1.6 3.1 2.8 7 2.8s7-1.2 7-2.8v-4.6"/>',
   house:'<path d="m3 11 9-8 9 8"/><path d="M5 10v10h14V10M9 20v-6h6v6"/>'
 };
