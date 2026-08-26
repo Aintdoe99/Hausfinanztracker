@@ -69,6 +69,7 @@ let companyReturnToExpense=false;
 let editingCategoryName=null;
 let editingFinanceSource=null;
 let searchQuery="";
+let budgetSearchQuery="";
 
 
 function normalizeCompanyName(value=""){
@@ -340,8 +341,37 @@ function navTo(id){
   document.querySelectorAll(".nav-btn").forEach(b=>b.classList.toggle("active",b.dataset.nav===id));
   const t={overview:["Hausbau","Übersicht"],expenses:["Ausgaben","Alle Vorgänge"],budget:["Budget","Gewerke"],documents:["Dokumente","PDF-Ablage"],more:["Mehr","Einstellungen & Export"]};
   document.getElementById("pageTitle").textContent=t[id][0];
-  document.getElementById("pageSub").textContent=t[id][1];
-  
+  pageSub.textContent=t[id][1];
+  pageSub.hidden=false;
+  updateExpensesHeader();
+}
+
+// Im Ausgaben-Reiter zeigt der Kopf nur an, was die Chips nicht schon zeigen.
+function updateExpensesHeader(){
+  if(!titleRow)return;
+  const onExpenses=document.getElementById("expenses").classList.contains("active");
+  const filtered=onExpenses&&(currentFilter!=="Alle"||Boolean(currentFinancing));
+
+  clearFilterBtn.hidden=!filtered;
+  titleRow.classList.toggle("clearable",filtered);
+
+  if(!onExpenses)return;
+  // Der Status steht schon im schwarzen Chip. Nur die Finanzierungsquelle
+  // ist sonst nirgends sichtbar und wird deshalb hier genannt.
+  if(currentFinancing){
+    pageSub.textContent="Finanzierung: "+currentFinancing;
+    pageSub.hidden=false;
+  }else{
+    pageSub.textContent="";
+    pageSub.hidden=true;
+  }
+}
+
+function showAllExpenses(){
+  currentFilter="Alle";
+  currentFinancing=null;
+  document.querySelectorAll(".chip").forEach(c=>c.classList.remove("active"));
+  renderExpenseList();
 }
 function openFinanceBudgetEditor(source){
   editingFinanceSource=source;
@@ -468,6 +498,7 @@ function renderExpenseList(){
     (!currentFinancing||e.financing===currentFinancing)&&
     (!q||[e.title,e.company,e.category,e.note].filter(Boolean).join(" ").toLowerCase().includes(q))
   );
+  updateExpensesHeader();
   expenseList.innerHTML=list.length?list.map(e=>{
     const m=metaFor(e.financing,e.color,e.category);const st=statusOf(e);
     const dateText=st==="Bezahlt"?"Bezahlt am "+dateDE(e.paid):st==="Rechnung offen"?"fällig "+dateDE(e.due):st==="Beauftragt"?"Beauftragt am "+dateDE(e.ordered):"Geplant";
@@ -494,7 +525,12 @@ function renderBudgets(){
   budgetAvailableValue.textContent=money(totalAvailable);
   budgetAvailableValue.classList.toggle("negative",totalAvailable<0);
 
-  budgetList.innerHTML=Object.entries(state.budgets).map(([cat,budget])=>{
+  const bq=budgetSearchQuery.trim().toLowerCase();
+  const rows=Object.entries(state.budgets)
+    .filter(([cat])=>!bq||cat.toLowerCase().includes(bq))
+    .sort((a,b)=>a[0].localeCompare(b[0],"de"));
+
+  budgetList.innerHTML=rows.map(([cat,budget])=>{
     const spent=state.expenses.filter(e=>e.category===cat).reduce((s,e)=>s+Number(e.amount||0),0);
     const pct=budget?Math.min(100,spent/budget*100):0;
     const m=categoryMeta(cat);
@@ -511,7 +547,7 @@ function renderBudgets(){
         <div class="budget-bar"><span></span></div>
       </div>
     </button>`;
-  }).join("")||`<div class="empty">Noch keine Budgets erfasst</div>`;
+  }).join("")||`<div class="empty">${bq?"Keine passenden Budgetposten":"Noch keine Budgets erfasst"}</div>`;
 
   budgetList.querySelectorAll("[data-budget-key]").forEach(row=>{
     row.addEventListener("click",()=>openBudgetEditor(decodeURIComponent(row.dataset.budgetKey)));
@@ -861,6 +897,8 @@ document.getElementById("deleteExpense").addEventListener("click",deleteExpenseI
 expenseModal.addEventListener("click",e=>{if(e.target.id==="expenseModal")closeExpense();});
 document.querySelectorAll(".chip").forEach(c=>c.onclick=()=>{document.querySelectorAll(".chip").forEach(x=>x.classList.remove("active"));c.classList.add("active");currentFilter=c.dataset.filter;currentFinancing=null;renderExpenseList();});
 expenseSearch.addEventListener("input",()=>{searchQuery=expenseSearch.value;renderExpenseList();});
+budgetSearch.addEventListener("input",()=>{budgetSearchQuery=budgetSearch.value;renderBudgets();});
+titleRow.addEventListener("click",()=>{if(!clearFilterBtn.hidden)showAllExpenses();});
 openInvoicesCard.onclick=()=>showExpenses("Rechnung offen");openInvoicesCard.onkeydown=e=>{if(e.key==="Enter"||e.key===" "){e.preventDefault();showExpenses("Rechnung offen");}};
 fCategory.addEventListener("change",()=>{
   requestAnimationFrame(updateCategoryFieldIcon);

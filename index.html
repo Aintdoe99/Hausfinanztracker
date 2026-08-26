@@ -16,7 +16,10 @@
   <header class="topbar">
     <div class="topline">
       <div class="brand">
-        <h1 id="pageTitle">Hausbau</h1>
+        <div class="title-row" id="titleRow">
+          <h1 id="pageTitle">Hausbau</h1>
+          <button class="clear-badge" id="clearFilterBtn" type="button" hidden aria-label="Filterung aufheben" title="Filterung aufheben">✕</button>
+        </div>
         <p id="pageSub">Übersicht</p>
       </div>
       <button class="icon-btn" id="settingsBtn" aria-label="Einstellungen">⚙</button>
@@ -69,7 +72,6 @@
         <input type="search" id="expenseSearch" placeholder="Ausgaben durchsuchen…" autocomplete="off" />
       </div>
       <div class="chips" id="statusChips">
-        <button class="chip active" data-filter="Alle">Alle</button>
         <button class="chip" data-filter="Geplant">Geplant</button>
         <button class="chip" data-filter="Beauftragt">Beauftragt</button>
         <button class="chip" data-filter="Rechnung offen">Rechnung offen</button>
@@ -100,6 +102,11 @@
             <strong id="budgetAvailableValue">0,00 €</strong>
           </div>
         </div>
+      </div>
+
+      <div class="search-field">
+        <span class="search-icon" data-lucide="search"></span>
+        <input type="search" id="budgetSearch" placeholder="Budgetposten durchsuchen…" autocomplete="off" />
       </div>
 
       <div class="card panel" id="budgetList"></div>
@@ -427,6 +434,9 @@
           <option value="construction">Baustelle</option>
           <option value="blocks">Bausteine</option>
           <option value="window">Fenster</option>
+          <option value="door">Tür</option>
+          <option value="spade">Spaten / Schaufel</option>
+          <option value="banknote">Geldschein</option>
           <option value="layers">Schichten</option>
           <option value="flame">Heizung</option>
           <option value="wind">Lüftung</option>

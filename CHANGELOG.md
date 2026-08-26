@@ -3,10 +3,15 @@
 - Finanzierungsquellen haben jetzt ein frei wählbares Symbol (Sparschwein, Bank, Geldschein, Münzen, Haus) mit Live-Vorschau. Beim Umbenennen bleibt das Symbol erhalten, statt auf den Geldschein zurückzuspringen.
 - Geldschein-Symbol neu gezeichnet: eckige Form im Seitenverhältnis eines echten Scheins, mit Euro-Zeichen statt Kreis.
 - Lineal-Symbol neu gezeichnet: eckig, alle Striche gleich lang und mit gleichen Abständen zu beiden Rändern.
-- Neues Symbol „Zirkel" für die Gewerkeverwaltung, passend für Architektur und Planung.
+- Vier neue Symbole in der Gewerkeverwaltung: Zirkel (Architektur), Tür, Spaten/Schaufel (Erdarbeiten) und Geldschein (Finanzierungskosten).
+- Türen haben damit ein eigenes Symbol und sind nicht mehr mit Fenstern zu verwechseln.
+- Der Filter „Alle" ist aus der Chip-Leiste verschwunden. Die Ausgabenliste zeigt beim Öffnen immer alle Vorgänge.
+- Sobald gefiltert wird, erscheint neben der Überschrift „Ausgaben" ein ✕. Ein Tipp darauf — oder auf die Überschrift — hebt die Filterung auf.
+- Der Untertitel im Ausgaben-Reiter entfällt: Welcher Status gewählt ist, zeigt bereits der schwarze Chip. Nur beim Sprung über „Verbraucht" nennt er die Finanzierungsquelle, die sonst nirgends sichtbar wäre.
 - Neuer Filter „Geplant" für Ausgaben ohne Termine — bisher waren diese nur unter „Alle" zu finden.
+- Budgetposten sind jetzt alphabetisch sortiert und über ein eigenes Suchfeld filterbar.
 - Die Filterleiste scrollt nicht mehr seitlich, sondern steht als festes Raster über zwei Zeilen. Der aktive Filter kann dadurch nicht mehr abgeschnitten werden.
-- Die vier Status-Chips sind exakt gleich breit (2×2-Raster), „Alle" steht als Zurücksetzen über die volle Breite darüber. Alles schließt bündig mit den Kacheln darunter ab.
+- Die vier Status-Chips sind exakt gleich breit und stehen als 2×2-Raster bündig zu den Kacheln darunter.
 - Filter-Chips etwas kompakter (kleinere Schrift) und mit leichtem Tipp-Feedback.
 - Reihenfolge der Filter folgt jetzt dem Ablauf: Alle · Geplant · Beauftragt · Rechnung offen · Bezahlt.
 - Dateinamen bleiben bei v41 für einfaches Ersetzen im Repository.
