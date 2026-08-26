@@ -1,5 +1,6 @@
 # Hausbau-Cockpit 4.9
 
+- Im Finanzierungs-Bearbeiten-Fenster ist „Verbraucht" jetzt antippbar und springt direkt zu den bezahlten Ausgaben dieser Finanzierungsquelle.
 - Suchfeld in der Ausgabenliste: durchsucht Bezeichnung, Firma, Gewerk und Bemerkung, kombinierbar mit den Status-Filtern.
 - Finanzierungsquellen (Eigenkapital, KfW, Banktranchen) können jetzt beim Bearbeiten umbenannt werden, z. B. „Banktranche 1" → „ING Bank". Die neue Bezeichnung wird automatisch in Ausgaben, Farbverwaltung und Auswahlfeldern übernommen.
 - Dateinamen bleiben bei v41 für einfaches Ersetzen im Repository.

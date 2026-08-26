@@ -406,6 +406,8 @@ function totalsByFinance(){
 }
 function showExpenses(filter="Alle",financing=null){
   currentFilter=filter;currentFinancing=financing;
+  searchQuery="";
+  if(typeof expenseSearch!=="undefined"&&expenseSearch)expenseSearch.value="";
   document.querySelectorAll(".chip").forEach(c=>c.classList.toggle("active",c.dataset.filter===filter));
   navTo("expenses");renderExpenseList();
 }
@@ -881,6 +883,12 @@ addPdfBtn.onclick=()=>pdfInput.click();pdfInput.onchange=e=>addPdfs([...e.target
 addBudgetBtn.onclick=()=>openBudgetEditor();cancelBudget.onclick=closeBudgetEditor;saveBudget.onclick=saveBudgetItem;deleteBudget.onclick=deleteBudgetItem;
 budgetModal.addEventListener("click",e=>{if(e.target.id==="budgetModal")closeBudgetEditor();});
 cancelFinanceBudget.addEventListener("click",closeFinanceBudgetEditor);
+financeBudgetUsedTile.addEventListener("click",()=>{
+  if(!editingFinanceSource)return;
+  const source=editingFinanceSource;
+  closeFinanceBudgetEditor();
+  showExpenses("Bezahlt",source);
+});
 saveFinanceBudget.addEventListener("click",saveFinanceBudgetItem);
 financeBudgetAmount.addEventListener("input",refreshFinanceBudgetPreview);
 financeBudgetName.addEventListener("input",()=>{
