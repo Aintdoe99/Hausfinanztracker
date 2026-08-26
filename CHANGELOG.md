@@ -1,3 +1,9 @@
+# Hausbau-Cockpit 4.9
+
+- Suchfeld in der Ausgabenliste: durchsucht Bezeichnung, Firma, Gewerk und Bemerkung, kombinierbar mit den Status-Filtern.
+- Finanzierungsquellen (Eigenkapital, KfW, Banktranchen) können jetzt beim Bearbeiten umbenannt werden, z. B. „Banktranche 1" → „ING Bank". Die neue Bezeichnung wird automatisch in Ausgaben, Farbverwaltung und Auswahlfeldern übernommen.
+- Dateinamen bleiben bei v41 für einfaches Ersetzen im Repository.
+
 # Hausbau-Cockpit 4.8
 
 - Jede Finanzierungskachel öffnet nur die angeklickte Finanzierungsquelle.

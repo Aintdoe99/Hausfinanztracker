@@ -64,6 +64,10 @@
     </section>
 
     <section id="expenses" class="screen">
+      <div class="search-field">
+        <span class="search-icon" data-lucide="search"></span>
+        <input type="search" id="expenseSearch" placeholder="Ausgaben durchsuchen…" autocomplete="off" />
+      </div>
       <div class="chips" id="statusChips">
         <button class="chip active" data-filter="Alle">Alle</button>
         <button class="chip" data-filter="Beauftragt">Beauftragt</button>
@@ -218,9 +222,7 @@
         <span class="field-stack">
           <span class="field-label strong-label">Finanzierung *</span>
         </span>
-        <select id="fFinancing" class="tail-select">
-          <option>Eigenkapital</option><option>KfW</option><option>Banktranche 1</option><option>Banktranche 2</option>
-        </select>
+        <select id="fFinancing" class="tail-select"></select>
         <span class="field-tail" data-lucide="chevron-down"></span>
       </label>
 
@@ -301,6 +303,10 @@
     </div>
 
     <div class="card form-card">
+      <div class="field">
+        <label>Bezeichnung</label>
+        <input id="financeBudgetName" placeholder="z. B. ING Bank" />
+      </div>
       <div class="field">
         <label>Gesamtbetrag</label>
         <input id="financeBudgetAmount" type="number" min="0" step="0.01" placeholder="0,00" />

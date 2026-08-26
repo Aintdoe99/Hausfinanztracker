@@ -12,6 +12,7 @@ const defaultState={
     "Banktranche 1":0,
     "Banktranche 2":0
   },
+  financeSources:["Eigenkapital","KfW","Banktranche 1","Banktranche 2"],
   categoryColors:{
     "Grundstück & Nebenkosten":"teal",
     "Planung & Genehmigungen":"purple",
@@ -66,6 +67,7 @@ let editingCompanyId=null;
 let companyReturnToExpense=false;
 let editingCategoryName=null;
 let editingFinanceSource=null;
+let searchQuery="";
 
 
 function normalizeCompanyName(value=""){
@@ -115,6 +117,7 @@ function loadState(){
     const parsed=raw?JSON.parse(raw):structuredClone(defaultState);
     parsed.colors={...defaultState.colors,...(parsed.colors||{})};
     parsed.financeBudgets={...defaultState.financeBudgets,...(parsed.financeBudgets||{})};
+    parsed.financeSources=Array.isArray(parsed.financeSources)&&parsed.financeSources.length?parsed.financeSources:[...defaultState.financeSources];
     parsed.categoryColors={...defaultState.categoryColors,...(parsed.categoryColors||{})};
     parsed.categories=Array.isArray(parsed.categories)&&parsed.categories.length?parsed.categories:[...defaultState.categories];
     parsed.categoryIcons={...defaultState.categoryIcons,...(parsed.categoryIcons||{})};
@@ -161,6 +164,14 @@ function refreshCategorySelects(){
   fill(bCategory,bCategory.value);
 }
 
+function refreshFinanceSelects(){
+  if(!fFinancing)return;
+  const values=state.financeSources;
+  const current=fFinancing.value;
+  fFinancing.innerHTML=values.map(source=>`<option>${escapeHtml(source)}</option>`).join("");
+  if(current&&values.includes(current))fFinancing.value=current;
+}
+
 function syncCategoryRename(oldName,newName){
   if(oldName===newName)return;
   state.expenses.forEach(expense=>{if(expense.category===oldName)expense.category=newName;});
@@ -178,6 +189,22 @@ function syncCategoryRename(oldName,newName){
   if(Object.prototype.hasOwnProperty.call(state.categoryIcons,oldName)){
     state.categoryIcons[newName]=state.categoryIcons[oldName];
     delete state.categoryIcons[oldName];
+  }
+}
+
+function syncFinanceRename(oldName,newName){
+  if(oldName===newName)return;
+  const index=state.financeSources.indexOf(oldName);
+  if(index>=0)state.financeSources[index]=newName;
+
+  state.expenses.forEach(expense=>{if(expense.financing===oldName)expense.financing=newName;});
+
+  if(Object.prototype.hasOwnProperty.call(state.colors,oldName)){
+    state.colors[newName]=state.colors[oldName];
+    delete state.colors[oldName];
+  }
+  if(Object.prototype.hasOwnProperty.call(state.financeBudgets,oldName)){
+    delete state.financeBudgets[oldName];
   }
 }
 
@@ -322,6 +349,7 @@ function openFinanceBudgetEditor(source){
   financeBudgetSourceIcon.innerHTML=financeIconSvg(source);
   financeBudgetSourceCard.style.setProperty("--accent",meta.accent);
   financeBudgetSourceCard.style.setProperty("--soft",meta.soft);
+  financeBudgetName.value=source;
   financeBudgetAmount.value=budget||"";
   financeBudgetUsed.textContent=money(used);
   financeBudgetAvailable.textContent=money(available);
@@ -346,20 +374,31 @@ function refreshFinanceBudgetPreview(){
 
 function saveFinanceBudgetItem(){
   if(!editingFinanceSource)return;
+  const newName=normalizeCompanyName(financeBudgetName.value)||editingFinanceSource;
   const amount=Number(financeBudgetAmount.value||0);
+  if(!newName){toast("Bitte eine Bezeichnung eingeben");return;}
   if(!Number.isFinite(amount)||amount<0){
     toast("Bitte einen gültigen Gesamtbetrag eingeben");
     return;
   }
-  state.financeBudgets[editingFinanceSource]=amount;
+  const duplicate=state.financeSources.some(source=>
+    source!==editingFinanceSource&&source.toLowerCase()===newName.toLowerCase()
+  );
+  if(duplicate){toast("Diese Bezeichnung gibt es bereits");return;}
+
+  if(newName!==editingFinanceSource)syncFinanceRename(editingFinanceSource,newName);
+  state.financeBudgets[newName]=amount;
+
   saveState();
   closeFinanceBudgetEditor();
+  refreshFinanceSelects();
   render();
-  toast("Finanzierungsbudget gespeichert");
+  toast("Finanzierung gespeichert");
 }
 
 function totalsByFinance(){
-  const out={"Eigenkapital":0,"KfW":0,"Banktranche 1":0,"Banktranche 2":0};
+  const out={};
+  state.financeSources.forEach(source=>out[source]=0);
   state.expenses
     .filter(isPaidExpense)
     .forEach(e=>out[e.financing]=(out[e.financing]||0)+Number(e.amount||0));
@@ -413,7 +452,12 @@ function summaryRow(e){
   </div>`;
 }
 function renderExpenseList(){
-  const list=state.expenses.filter(e=>(currentFilter==="Alle"||statusOf(e)===currentFilter)&&(!currentFinancing||e.financing===currentFinancing));
+  const q=searchQuery.trim().toLowerCase();
+  const list=state.expenses.filter(e=>
+    (currentFilter==="Alle"||statusOf(e)===currentFilter)&&
+    (!currentFinancing||e.financing===currentFinancing)&&
+    (!q||[e.title,e.company,e.category,e.note].filter(Boolean).join(" ").toLowerCase().includes(q))
+  );
   expenseList.innerHTML=list.length?list.map(e=>{
     const m=metaFor(e.financing,e.color,e.category);const st=statusOf(e);
     const dateText=st==="Bezahlt"?"Bezahlt am "+dateDE(e.paid):st==="Rechnung offen"?"fällig "+dateDE(e.due):st==="Beauftragt"?"Beauftragt am "+dateDE(e.ordered):"Geplant";
@@ -475,7 +519,7 @@ function renderDocuments(){
     </div>`).join(""):`<div class="empty">Noch keine PDFs hinterlegt</div>`;
 }
 function renderColorSettings(){
-  const fins=["Eigenkapital","KfW","Banktranche 1","Banktranche 2"];
+  const fins=state.financeSources;
   colorSettings.innerHTML=fins.map(fin=>`
     <div class="color-setting">
       <div><b>${fin}</b></div>
@@ -777,6 +821,7 @@ async function importBackup(file){
   state=ensureCompaniesFromExpenses(backup.state);
   state.categories=Array.isArray(state.categories)&&state.categories.length?state.categories:[...defaultState.categories];
   state.categoryIcons={...defaultState.categoryIcons,...(state.categoryIcons||{})};
+  state.financeSources=Array.isArray(state.financeSources)&&state.financeSources.length?state.financeSources:[...defaultState.financeSources];
   state.companies=(state.companies||[]).map(company=>({
     ...company,
     contactPerson:company.contactPerson||company.contact||"",
@@ -788,10 +833,12 @@ async function importBackup(file){
     const blob=typeof d.blob==="string"?dataUrlToBlob(d.blob):d.blob;
     await putDocument({...d,id,blob});
   }
+  refreshCategorySelects();refreshFinanceSelects();
   render();toast("Backup importiert");
 }
 
 refreshCategorySelects();
+refreshFinanceSelects();
 updateCategoryFieldIcon();
 renderCompanyOptions();
 document.querySelectorAll("[data-nav]").forEach(b=>b.addEventListener("click",()=>navTo(b.dataset.nav)));
@@ -802,6 +849,7 @@ document.getElementById("saveExpense").addEventListener("click",saveExpenseRecor
 document.getElementById("deleteExpense").addEventListener("click",deleteExpenseItem);
 expenseModal.addEventListener("click",e=>{if(e.target.id==="expenseModal")closeExpense();});
 document.querySelectorAll(".chip").forEach(c=>c.onclick=()=>{document.querySelectorAll(".chip").forEach(x=>x.classList.remove("active"));c.classList.add("active");currentFilter=c.dataset.filter;currentFinancing=null;renderExpenseList();});
+expenseSearch.addEventListener("input",()=>{searchQuery=expenseSearch.value;renderExpenseList();});
 openInvoicesCard.onclick=()=>showExpenses("Rechnung offen");openInvoicesCard.onkeydown=e=>{if(e.key==="Enter"||e.key===" "){e.preventDefault();showExpenses("Rechnung offen");}};
 fCategory.addEventListener("change",()=>{
   requestAnimationFrame(updateCategoryFieldIcon);
@@ -835,6 +883,9 @@ budgetModal.addEventListener("click",e=>{if(e.target.id==="budgetModal")closeBud
 cancelFinanceBudget.addEventListener("click",closeFinanceBudgetEditor);
 saveFinanceBudget.addEventListener("click",saveFinanceBudgetItem);
 financeBudgetAmount.addEventListener("input",refreshFinanceBudgetPreview);
+financeBudgetName.addEventListener("input",()=>{
+  financeBudgetSourceName.textContent=financeBudgetName.value.trim()||editingFinanceSource||"";
+});
 financeBudgetModal.addEventListener("click",event=>{if(event.target.id==="financeBudgetModal")closeFinanceBudgetEditor();});
 editBudgetBtn.onclick=()=>{const v=prompt("Gesamtbudget in Euro",state.overallBudget);if(v!==null&&!isNaN(Number(v))){state.overallBudget=Number(v);render();}};
 exportBtn.onclick=exportBackup;importBtn.onclick=()=>importFile.click();importFile.onchange=async e=>{try{await importBackup(e.target.files[0]);}catch{toast("Import fehlgeschlagen");}};
