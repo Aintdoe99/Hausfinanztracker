@@ -2,17 +2,18 @@
 const categories=[
 "Grundstück & Nebenkosten","Planung & Genehmigungen","Vermessung","Baugrund & Gutachten","Erdarbeiten","Bodenplatte","Rohbau / Holzbau","Dach","Fenster & Türen","Fassade","Elektro / KNX","Heizung","Lüftung","Sanitär","PV & Speicher","Innenausbau","Böden","Malerarbeiten","Küche","Bäder","Carport","Außenanlagen","Baunebenkosten","Versicherungen","Sonstiges"];
 
+/* Reihenfolge alphabetisch nach Bezeichnung – gilt für alle Farbauswahlen */
 const palette={
-  green:{name:"Mint",accent:"#2F9D67",soft:"#DFF3E8"},
-  purple:{name:"Lavendel",accent:"#7D58C2",soft:"#EEE7FA"},
-  yellow:{name:"Gelb",accent:"#C79A00",soft:"#FFF3C8"},
   blue:{name:"Blau",accent:"#3277C8",soft:"#E3EFFB"},
+  yellow:{name:"Gelb",accent:"#C79A00",soft:"#FFF3C8"},
+  green:{name:"Grün",accent:"#2F9D67",soft:"#DFF3E8"},
+  purple:{name:"Lila",accent:"#7D58C2",soft:"#EEE7FA"},
   rose:{name:"Rosé",accent:"#C85E79",soft:"#F9E6EC"},
-  teal:{name:"Türkis",accent:"#159FA8",soft:"#DDF4F3"},
-  red:{name:"Rot",accent:"#D95C62",soft:"#FBE5E7"}
+  red:{name:"Rot",accent:"#D95C62",soft:"#FBE5E7"},
+  teal:{name:"Türkis",accent:"#159FA8",soft:"#DDF4F3"}
 };
 
-const expenseColorOrder=["purple","yellow","blue","rose","green","teal","red"];
+const expenseColorOrder=["blue","yellow","green","purple","rose","red","teal"];
 
 const categoryIconTypes={
   "Grundstück & Nebenkosten":"map",

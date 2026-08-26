@@ -88,7 +88,7 @@ function ensureCompaniesFromExpenses(targetState){
   (targetState.expenses||[]).forEach(expense=>{
     const name=normalizeCompanyName(expense.company);
     if(!name)return;
-    const category=expense.category||activeCategories()[0];
+    const category=expense.category||sortedCategories()[0];
     const key=`${category}::${name.toLowerCase()}`;
     let company=byKey.get(key);
     if(!company){
@@ -155,8 +155,13 @@ function activeCategories(){
   return state.categories||categories;
 }
 
+// Für alle Anzeigen und Auswahlmenüs: alphabetisch sortiert
+function sortedCategories(){
+  return [...activeCategories()].sort((a,b)=>a.localeCompare(b,"de"));
+}
+
 function refreshCategorySelects(){
-  const values=activeCategories();
+  const values=sortedCategories();
   const fill=(select,current="")=>{
     if(!select)return;
     select.innerHTML=values.map(category=>`<option>${escapeHtml(category)}</option>`).join("");
@@ -216,7 +221,7 @@ function syncFinanceRename(oldName,newName){
 }
 
 function renderCategoryList(){
-  const values=[...activeCategories()].sort((a,b)=>a.localeCompare(b,"de"));
+  const values=sortedCategories();
   categoryCount.textContent=values.length;
   categoryList.innerHTML=values.map(category=>{
     const meta=categoryMeta(category);
@@ -254,6 +259,13 @@ function clearCategoryForm(){
   deleteCategory.style.display="none";
 }
 
+function scrollSheetToTop(modal){
+  const sheet=modal?.querySelector(".sheet");
+  if(!sheet)return;
+  try{sheet.scrollTo({top:0,behavior:"smooth"});}
+  catch{sheet.scrollTop=0;}
+}
+
 function editCategory(name){
   editingCategoryName=name;
   categoryModalTitle.textContent="Gewerk bearbeiten";
@@ -262,6 +274,7 @@ function editCategory(name){
   gColor.value=state.categoryColors[name]||"teal";
   updateCategoryPreview();
   deleteCategory.style.display="inline-flex";
+  scrollSheetToTop(categoryModal);
 }
 
 function openCategoryManager(){
@@ -618,7 +631,7 @@ function updateCategoryFieldIcon(){
   const select=document.getElementById("fCategory");
   if(!icon||!select)return;
 
-  const category=select.value||activeCategories()[0];
+  const category=select.value||sortedCategories()[0];
   const m=categoryMeta(category);
   const type=categoryIconTypes[category]||"tool";
   const paths=categorySvgPaths[type]||categorySvgPaths.tool;
@@ -635,7 +648,7 @@ function updateCategoryFieldIcon(){
 
 
 function renderCompanyOptions(selectedId=""){
-  const category=fCategory.value||activeCategories()[0];
+  const category=fCategory.value||sortedCategories()[0];
   const companies=companiesForCategory(category);
   fCompany.innerHTML=`<option value="">Keine Firma ausgewählt</option>`+
     companies.map(company=>`<option value="${company.id}">${escapeHtml(company.name)}</option>`).join("");
@@ -678,7 +691,7 @@ function clearCompanyForm(category=null){
   editingCompanyId=null;
   companyModalTitle.textContent="Neue Firma";
   cName.value="";
-  cCategory.value=category||fCategory.value||activeCategories()[0];
+  cCategory.value=category||fCategory.value||sortedCategories()[0];
   cContactPerson.value="";
   cPhone.value="";
   cEmail.value="";
@@ -696,6 +709,7 @@ function editCompany(id){
   cPhone.value=company.phone||"";
   cEmail.value=company.email||"";
   deleteCompany.style.display="inline-flex";
+  scrollSheetToTop(companyModal);
 }
 
 function openCompanyManager({category=null,returnToExpense=false}={}){
@@ -790,7 +804,7 @@ function openExpense(id=null){
   head.classList.toggle("mode-new",!e);
   modalTitle.textContent=e?"Ausgabe bearbeiten":"Neue Ausgabe";
   deleteExpense.style.display=e?"inline-block":"none";
-  fCategory.value=e?.category||activeCategories()[0];updateCategoryFieldIcon();fTitle.value=e?.title||"";
+  fCategory.value=e?.category||sortedCategories()[0];updateCategoryFieldIcon();fTitle.value=e?.title||"";
   const matchedCompanyId=e?.companyId||state.companies.find(company=>
     company.category===fCategory.value &&
     normalizeCompanyName(company.name).toLowerCase()===normalizeCompanyName(e?.company||"").toLowerCase()
@@ -838,7 +852,7 @@ async function openStoredDoc(id){
 function openBudgetEditor(category=null){
   editingBudgetKey=category;budgetModalTitle.textContent=category?"Budget bearbeiten":"Budget hinzufügen";
   refreshCategorySelects();
-  bCategory.value=category||activeCategories()[0]||"";
+  bCategory.value=category||sortedCategories()[0]||"";
   bCategory.disabled=Boolean(category);
   bAmount.value=category?(state.budgets[category]||""):"";
   deleteBudget.style.display=category?"inline-block":"none";budgetModal.classList.add("open");

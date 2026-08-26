@@ -8,6 +8,11 @@
 - Der Filter „Alle" ist aus der Chip-Leiste verschwunden. Die Ausgabenliste zeigt beim Öffnen immer alle Vorgänge.
 - Sobald gefiltert wird, erscheint neben der Überschrift „Ausgaben" ein ✕. Ein Tipp darauf — oder auf die Überschrift — hebt die Filterung auf.
 - Der Untertitel im Ausgaben-Reiter entfällt: Welcher Status gewählt ist, zeigt bereits der schwarze Chip. Nur beim Sprung über „Verbraucht" nennt er die Finanzierungsquelle, die sonst nirgends sichtbar wäre.
+- Beim Antippen eines Gewerks oder einer Firma weiter unten in der Liste springt das Formular oben automatisch ins Bild — kein Hochscrollen von Hand mehr.
+- Die Symbolauswahl ist alphabetisch sortiert, bei den Gewerken wie bei den Finanzierungsquellen.
+- Die Gewerke-Auswahl ist jetzt auch in den Formularen alphabetisch (Ausgabe erfassen, Budgetposten anlegen, Firma anlegen) — vorher nur in der Verwaltung und im Budget-Reiter.
+- Die Farben „Mint" und „Lavendel" heißen jetzt schlicht „Grün" und „Lila".
+- Auch die Farben stehen überall alphabetisch: Blau, Gelb, Grün, Lila, Rosé, Rot, Türkis — im Gewerke-Dialog wie bei den Farbfeldern unter „Mehr" und im Ausgabenformular.
 - Neuer Filter „Geplant" für Ausgaben ohne Termine — bisher waren diese nur unter „Alle" zu finden.
 - Budgetposten sind jetzt alphabetisch sortiert und über ein eigenes Suchfeld filterbar.
 - Die Filterleiste scrollt nicht mehr seitlich, sondern steht als festes Raster über zwei Zeilen. Der aktive Filter kann dadurch nicht mehr abgeschnitten werden.
