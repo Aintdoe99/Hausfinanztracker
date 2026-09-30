@@ -137,10 +137,23 @@ function loadState(){
 function saveState(){localStorage.setItem("hausbauCockpitState",JSON.stringify(state));}
 function money(v){return new Intl.NumberFormat("de-DE",{style:"currency",currency:"EUR"}).format(Number(v||0));}
 function dateDE(v){return v?new Date(v+"T00:00:00").toLocaleDateString("de-DE"):"";}
-function isPaidExpense(e){
-  return Boolean(e && e.paid);
+function paidAmountOf(e){
+  if(!e)return 0;
+  if(e.paidAmount!==undefined && e.paidAmount!==null && e.paidAmount!=="") return Math.max(0,Number(e.paidAmount||0));
+  // Rückwärtskompatibilität: bisher bedeutete ein Bezahlt-Datum, dass der Gesamtbetrag bezahlt war.
+  return e.paid?Math.max(0,Number(e.amount||0)):0;
 }
-function statusOf(e){if(isPaidExpense(e))return"Bezahlt";if(e.received)return"Rechnung offen";if(e.ordered)return"Beauftragt";return"Geplant";}
+function isPaidExpense(e){
+  return Boolean(e && Number(e.amount||0)>0 && paidAmountOf(e)>=Number(e.amount||0));
+}
+function statusOf(e){
+  const paid=paidAmountOf(e);
+  if(isPaidExpense(e))return"Bezahlt";
+  if(paid>0)return"Teilbezahlt";
+  if(e.received)return"Rechnung offen";
+  if(e.ordered)return"Beauftragt";
+  return"Geplant";
+}
 function escapeHtml(s=""){return String(s).replace(/[&<>"']/g,m=>({"&":"&amp;","<":"&lt;",">":"&gt;","\"":"&quot;","'":"&#039;"}[m]));}
 function toast(msg){const el=document.getElementById("toast");el.textContent=msg;el.classList.add("show");setTimeout(()=>el.classList.remove("show"),1800);}
 function metaFor(fin,override=null,category=null){
@@ -451,8 +464,8 @@ function totalsByFinance(){
   const out={};
   state.financeSources.forEach(source=>out[source]=0);
   state.expenses
-    .filter(isPaidExpense)
-    .forEach(e=>out[e.financing]=(out[e.financing]||0)+Number(e.amount||0));
+    .filter(e=>paidAmountOf(e)>0)
+    .forEach(e=>out[e.financing]=(out[e.financing]||0)+paidAmountOf(e));
   return out;
 }
 function showExpenses(filter="Alle",financing=null){
@@ -464,7 +477,7 @@ function showExpenses(filter="Alle",financing=null){
 }
 function render(){
   saveState();
-  const total=state.expenses.filter(isPaidExpense).reduce((s,e)=>s+Number(e.amount||0),0);
+  const total=state.expenses.reduce((s,e)=>s+paidAmountOf(e),0);
   const pct=state.overallBudget?Math.min(100,total/state.overallBudget*100):0;
   totalSpent.textContent=money(total);overallBudgetText.textContent=money(state.overallBudget);
   overallPctSmall.textContent=Math.round(pct)+" %";overallBar.style.width=pct+"%";
@@ -486,7 +499,9 @@ function render(){
   }).join("");
   document.querySelectorAll(".finance-card").forEach(c=>c.onclick=()=>openFinanceBudgetEditor(c.dataset.financing));
 
-  const open=state.expenses.filter(e=>statusOf(e)==="Rechnung offen").reduce((s,e)=>s+Number(e.amount||0),0);
+  const open=state.expenses
+    .filter(e=>e.received && !isPaidExpense(e))
+    .reduce((s,e)=>s+Math.max(0,Number(e.amount||0)-paidAmountOf(e)),0);
   openAmount.textContent=money(open);
 
   const recent=[...state.expenses].slice(-4).reverse();
@@ -810,7 +825,7 @@ function openExpense(id=null){
     normalizeCompanyName(company.name).toLowerCase()===normalizeCompanyName(e?.company||"").toLowerCase()
   )?.id||"";
   renderCompanyOptions(matchedCompanyId);
-  fAmount.value=e?.amount||"";fFinancing.value=e?.financing||"Eigenkapital";fOrdered.value=e?.ordered||"";
+  fAmount.value=e?.amount||"";fPaidAmount.value=e?paidAmountOf(e):"";fFinancing.value=e?.financing||"Eigenkapital";fOrdered.value=e?.ordered||"";
   fReceived.value=e?.received||"";fDue.value=e?.due||"";fPaid.value=e?.paid||"";fNote.value=e?.note||"";noteCount.textContent=fNote.value.length;
   draftDocs=structuredClone(e?.docs||[]);draftExpenseColor=state.categoryColors[fCategory.value]||null;renderExpenseColorPicker();renderDraftDocs();expenseModal.classList.add("open");if(window.lucide)lucide.createIcons();updateCategoryFieldIcon();
 }
@@ -818,7 +833,7 @@ function closeExpense(){expenseModal.classList.remove("open");}
 async function saveExpenseRecord(){
   const title=fTitle.value.trim();if(!title){toast("Bitte eine Bezeichnung eingeben");return;}
   const selectedCompany=companyById(fCompany.value);
-  const obj={id:editingId||crypto.randomUUID(),category:fCategory.value,title,companyId:selectedCompany?.id||"",company:selectedCompany?.name||"",amount:Number(fAmount.value||0),financing:fFinancing.value,ordered:fOrdered.value,received:fReceived.value,due:fDue.value,paid:fPaid.value,note:fNote.value.trim(),color:null,docs:draftDocs};
+  const obj={id:editingId||crypto.randomUUID(),category:fCategory.value,title,companyId:selectedCompany?.id||"",company:selectedCompany?.name||"",amount:Number(fAmount.value||0),paidAmount:Math.min(Number(fAmount.value||0),Math.max(0,Number(fPaidAmount.value||0))),financing:fFinancing.value,ordered:fOrdered.value,received:fReceived.value,due:fDue.value,paid:fPaid.value,note:fNote.value.trim(),color:null,docs:draftDocs};
   if(editingId){const i=state.expenses.findIndex(x=>x.id===editingId);state.expenses[i]=obj;}else state.expenses.push(obj);
   closeExpense();render();if(window.lucide)lucide.createIcons();toast("Gespeichert");
 }
@@ -897,6 +912,45 @@ async function importBackup(file){
   refreshCategorySelects();refreshFinanceSelects();
   render();toast("Backup importiert");
 }
+
+// Teilzahlungen: zweites Betragsfeld direkt unter dem Gesamtbetrag ergänzen.
+const amountField=fAmount.closest("label");
+const paidAmountField=document.createElement("label");
+paidAmountField.className="premium-field compact-field";
+paidAmountField.innerHTML=`
+  <span class="field-icon" data-lucide="badge-euro"></span>
+  <span class="field-stack">
+    <span class="field-label strong-label">Davon bezahlt</span>
+    <span class="field-help" style="font-size:12px;color:#8a919d;margin-top:2px">z. B. Anzahlung</span>
+  </span>
+  <input id="fPaidAmount" class="tail-input" type="number" step="0.01" min="0" placeholder="0,00" />
+`;
+amountField.insertAdjacentElement("afterend",paidAmountField);
+const fPaidAmount=document.getElementById("fPaidAmount");
+fPaidAmount.addEventListener("input",()=>{
+  const total=Number(fAmount.value||0);
+  const paid=Number(fPaidAmount.value||0);
+  if(total>0 && paid>total) fPaidAmount.setCustomValidity("Der bezahlte Betrag kann nicht höher als der Gesamtbetrag sein.");
+  else fPaidAmount.setCustomValidity("");
+});
+
+// Android/Chrome: Tippen auf die komplette Terminzeile öffnet zuverlässig den nativen Datumspicker.
+document.querySelectorAll("#expenseModal .date-field").forEach(row=>{
+  const input=row.querySelector('input[type="date"]');
+  if(!input)return;
+  row.style.cursor="pointer";
+  row.addEventListener("click",event=>{
+    if(event.target===input)return;
+    event.preventDefault();
+    input.focus({preventScroll:true});
+    if(typeof input.showPicker==="function"){
+      try{input.showPicker();}catch{}
+    }else input.click();
+  });
+  input.addEventListener("click",()=>{
+    if(typeof input.showPicker==="function"){try{input.showPicker();}catch{}}
+  });
+});
 
 refreshCategorySelects();
 refreshFinanceSelects();
